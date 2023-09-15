@@ -1,13 +1,15 @@
 import { app, BrowserWindow } from "electron";
 import { CustomScheme } from "./CustomScheme";
+import { CommonWindowEvent } from "./CommonWindowEvent";
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
-let mainWindow: BrowserWindow;
-
+export let mainWindow: BrowserWindow;
 /**
  * app为electron全局对象，当electron初始化好后，触发ready事件
  */
 app.whenReady().then(() => {
   let config = {
+    show: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
@@ -35,4 +37,5 @@ app.whenReady().then(() => {
     // 这个用来加载一个外链地址
     mainWindow.loadURL(`app://index.html`);
   }
-});
+  CommonWindowEvent.listen();
+})

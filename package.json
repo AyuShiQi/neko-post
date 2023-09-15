@@ -8,9 +8,11 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/node": "^20.6.0",
     "@vitejs/plugin-vue": "^4.2.3",
     "electron": "^26.2.0",
     "electron-builder": "^24.6.4",
+    "less": "^4.2.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-optimizer": "^1.4.2",
