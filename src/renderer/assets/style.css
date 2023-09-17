@@ -15,8 +15,15 @@
 
   --neko-bg-color: #3e3e3ec4;
   --neko-content-bg-color: #202020a9;
-  --neko-error-bg-color: rgb(225, 42, 42);
-  --neko-white-font-color: #e4e4e4db; 
+  --neko-error-bg-color: rgb(240, 74, 74);
+  --neko-white-font-color-s: #fafafadb;
+  --neko-white-font-color: #e4e4e4db;
+  --neko-white-border-color: #a0a0a0db; 
+}
+
+* {
+  padding: 0;
+  margin: 0;
 }
 
 li {

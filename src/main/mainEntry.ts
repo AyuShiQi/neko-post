@@ -39,3 +39,8 @@ app.whenReady().then(() => {
   }
   CommonWindowEvent.listen();
 })
+
+// 监听相关事件
+app.on("browser-window-created", (e, win) => {
+  CommonWindowEvent.regWinEvent(win);
+});

@@ -1,19 +1,13 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
 
-import homeWindow from '@/renderer/Window/homeWindow.vue'
 
-console.log(homeWindow)
-
-export default createRouter({
-  history: createWebHistory(),
-  routes: [
-    {
-      path: '/',
-      redirect: '/home'
-    },
-    {
-      path: '/home',
-      component: homeWindow
-    }
-  ]
+/**
+ * 用户信息注册
+ */
+export const useProfileStore = defineStore('profile', () => {
+  const username = ref('ysq')
+  return {
+    username
+  }
 })

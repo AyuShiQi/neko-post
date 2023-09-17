@@ -1,5 +1,5 @@
 import path from "path";
-import fs from "fs";
+import fs from "fs-extra";
 
 class BuildObj {
   //编译主进程代码
@@ -22,6 +22,8 @@ class BuildObj {
     delete localPkgJson.scripts;
     delete localPkgJson.devDependencies;
     localPkgJson.devDependencies = { electron: electronConfig };
+    localPkgJson.dependencies["better-sqlite3"] = "*";
+    localPkgJson.dependencies["bindings"] = "*";
     let tarJsonPath = path.join(process.cwd(), "dist", "package.json");
     fs.writeFileSync(tarJsonPath, JSON.stringify(localPkgJson));
     fs.mkdirSync(path.join(process.cwd(), "dist/node_modules"));
@@ -30,14 +32,16 @@ class BuildObj {
   buildInstaller() {
     let options = {
       config: {
+        // 额外的资源打包
+        extraResources: [{ from: `./src/common/db.db`, to: `./` }],
         directories: {
           output: path.join(process.cwd(), "release"),
           app: path.join(process.cwd(), "dist"),
         },
         files: ["**"],
         extends: null,
-        productName: "JueJin",
-        appId: "com.juejin.desktop",
+        productName: "NekoPost",
+        appId: "com.neokopost.desktop",
         asar: true,
         nsis: {
           oneClick: false, // 是否一键安装
@@ -45,13 +49,60 @@ class BuildObj {
           allowToChangeInstallationDirectory: true, // 允许安装修改目录
           createDesktopShortcut: true, // 创建桌面图标
           createStartMenuShortcut: true, // 创建开始菜单目标 
-          shortcutName: "juejinDesktop", // 图标名称
+          shortcutName: "nekoPostDesktop", // 图标名称
         },
         publish: [{ provider: "generic", url: "http://localhost:5500/" }],
       },
       project: process.cwd(),
     };
     return require("electron-builder").build(options);
+  }
+
+  async prepareSqlite() {
+    //拷贝better-sqlite3
+    let srcDir = path.join(process.cwd(), `node_modules/better-sqlite3`);
+    let destDir = path.join(process.cwd(), `dist/node_modules/better-sqlite3`);
+    fs.ensureDirSync(destDir);
+    fs.copySync(srcDir, destDir, {
+      filter: (src, dest) => {
+        if (src.endsWith("better-sqlite3") || src.endsWith("build") || src.endsWith("Release") || src.endsWith("better_sqlite3.node")) return true;
+        else if (src.includes("node_modules\\better-sqlite3\\lib")) return true;
+        else return false;
+      },
+    });
+  
+    let pkgJson = `{"name": "better-sqlite3","main": "lib/index.js"}`;
+    let pkgJsonPath = path.join(process.cwd(), `dist/node_modules/better-sqlite3/package.json`);
+    fs.writeFileSync(pkgJsonPath, pkgJson);
+    //制作bindings模块
+    let bindingPath = path.join(process.cwd(), `dist/node_modules/bindings/index.js`);
+    fs.ensureFileSync(bindingPath);
+    let bindingsContent = `module.exports = () => {
+  let addonPath = require("path").join(__dirname, '../better-sqlite3/build/Release/better_sqlite3.node');
+  return require(addonPath);
+  };`;
+    fs.writeFileSync(bindingPath, bindingsContent);
+  
+    pkgJson = `{"name": "bindings","main": "index.js"}`;
+    pkgJsonPath = path.join(process.cwd(), `dist/node_modules/bindings/package.json`);
+    fs.writeFileSync(pkgJsonPath, pkgJson);
+  }
+
+  prepareKnexjs() {
+    let pkgJsonPath = path.join(process.cwd(), `dist/node_modules/knex`);
+    fs.ensureDirSync(pkgJsonPath);
+    require("esbuild").buildSync({
+      entryPoints: ["./node_modules/knex/knex.js"],
+      bundle: true,
+      platform: "node",
+      format: "cjs",
+      minify: true,
+      outfile: "./dist/node_modules/knex/index.js",
+      external: ["oracledb", "pg-query-stream", "pg", "sqlite3", "tedious", "mysql", "mysql2", "better-sqlite3"],
+    });
+    let pkgJson = `{"name": "bindings","main": "index.js"}`;
+    pkgJsonPath = path.join(process.cwd(), `dist/node_modules/knex/package.json`);
+    fs.writeFileSync(pkgJsonPath, pkgJson);
   }
 }
 
@@ -67,6 +118,8 @@ export let buildPlugin = () => {
       buildObj.buildMain();
       buildObj.preparePackageJson();
       buildObj.buildInstaller();
+      buildObj.prepareSqlite();
+      buildObj.prepareKnexjs();
     },
   };
 };

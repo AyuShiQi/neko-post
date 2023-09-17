@@ -4,21 +4,32 @@
       <div class="neko-main-header__left__logo">
         <img src="../assets/neko-logo.png" alt="logo">
       </div>
-      <div class="option-list">
-        <span class="iconfont icon-daohang"></span>
-      </div>
+      <!-- 选项列表 -->
+      <vi-dropdown>
+        <div class="option-list">
+          <span class="iconfont icon-daohang"></span>
+        </div>
+        <template v-slot:content>
+          <ul class="option-list__list">
+            <li>创建新项目</li>
+            <li>打开项目</li>
+            <li>设置</li>
+          </ul>
+        </template>
+      </vi-dropdown>
     </div>
     <div class="neko-main-header__center">
       center
     </div>
     <div class="neko-main-header__right">
-      <div class="option-box">
+      <div class="option-box" @click="minimizWindow">
         <span class="iconfont icon-2zuixiaohua-2"></span>
       </div>
-      <div class="option-box">
-        <span class="iconfont icon-zuidahua1"></span>
+      <div class="option-box" @click="handleMaximizeWindow">
+        <span class="iconfont icon-zuidahua" v-if="isMaximized"></span>
+        <span class="iconfont icon-zuidahua1" v-else></span>
       </div>
-      <div class="option-box guanbi">
+      <div class="option-box guanbi" @click="closeWindow">
         <span class="iconfont icon-guanbi"></span>
       </div>
     </div>
@@ -26,6 +37,62 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import { ipcRenderer } from 'electron'
+
+const isMaximized = ref(true)
+
+// 下面是最大最小关闭事件
+function handleMaximizeWindow () {
+  isMaximized.value ? unmaximizeWindow() : maximizWindow()
+}
+/**
+ * 最大化窗口
+ */
+function maximizWindow () {
+  ipcRenderer.invoke('maxmizeWindow')
+}
+
+/**
+ * 最小化窗口
+ */
+function minimizWindow () {
+  ipcRenderer.invoke('minimizeWindow')
+}
+
+/**
+ * 取消最大化
+ */
+function unmaximizeWindow () {
+  ipcRenderer.invoke('unmaximizeWindow')
+}
+
+/**
+ * 关闭窗口
+ */
+ function closeWindow () {
+  ipcRenderer.invoke('closeWindow')
+}
+
+/**
+ * 最大最小化变换组
+ */
+function winMaximizeEvent () {
+  isMaximized.value = true
+}
+function winUnmaximizeEvent () {
+  isMaximized.value = false
+}
+
+onMounted(() => {
+  ipcRenderer.invoke('maxmizeWindow')
+  ipcRenderer.on("windowMaximized", winMaximizeEvent);
+  ipcRenderer.on("windowUnmaximized", winUnmaximizeEvent);
+});
+onUnmounted(() => {
+  ipcRenderer.off("windowMaximized", winMaximizeEvent);
+  ipcRenderer.off("windowUnmaximized", winUnmaximizeEvent);
+});
 </script>
 
 <style lang="less" scoped>
@@ -66,26 +133,55 @@
       display: flex;
       width: 24px;
       height: 24px;
+      color: var(--neko-white-font-color);
       justify-content: center;
       align-items: center;
       border-radius: 5px;
       cursor: pointer;
 
       &:hover {
-        color: rgb(255, 255, 255);
-        background-color: var(--neko-bg-color);
+        color: var(--neko-white-font-color-s);
       }
 
       .iconfont {
         font-size: 18px;
       }
     }
+
+    .option-list__list {
+      width: 110px;
+      // height: 170px;
+      padding: 6px;
+      background-color: var(--neko-content-bg-color);
+      box-sizing: border-box;
+      box-shadow: inset 0 0 0 1px var(--neko-white-border-color);
+      border-radius: var(--vi-card-radius);
+
+      li {
+        display: flex;
+        width: 100%;
+        height: 32px;
+        padding: 6px 8px;
+        color: var(--neko-white-font-color);
+        align-items: center;
+        box-sizing: border-box;
+        border-radius: var(--vi-card-radius);
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--vi-purple-color6);
+        }
+      }
+    }
   }
 
   .neko-main-header__center {
+    display: flex;
     // 可拖拽窗口，但会屏蔽所有鼠标事件
     -webkit-app-region: drag;
     flex: 1;
+    justify-content: center;
+    align-items: center;
   }
   .neko-main-header__right {
     display: flex;
@@ -103,7 +199,7 @@
       }
 
       .iconfont {
-        font-size: 14px;
+        font-size: 12px;
       }
     }
 
