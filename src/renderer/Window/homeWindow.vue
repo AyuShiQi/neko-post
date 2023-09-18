@@ -1,6 +1,9 @@
 <template>
   <div class="neko-home-main">
     <BarSide/>
+    <div class="neko-home-workspace">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -15,8 +18,14 @@
 
 <style lang="less">
   .neko-home-main {
+    display: flex;
     width: 100%;
     height: calc(100% - 40px);
-    background-color: var(--neko-content-bg-color);
+    background-color: var(--neko-main-bg-color);
+
+    .neko-home-workspace {
+      height: 100%;
+      flex: 1;
+    }
   }
 </style>

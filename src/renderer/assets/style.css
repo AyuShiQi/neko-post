@@ -13,9 +13,10 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --neko-bg-color: #3e3e3ec4;
-  --neko-content-bg-color: #202020a9;
-  --neko-error-bg-color: rgb(240, 74, 74);
+  --neko-bg-color: #222222d0;
+  --neko-content-bg-color: #121213ad;
+  --neko-main-bg-color: #47474795;
+  --neko-error-bg-color: rgba(227, 35, 35, 0.509);
   --neko-white-font-color-s: #fafafadb;
   --neko-white-font-color: #e4e4e4db;
   --neko-white-border-color: #a0a0a0db; 

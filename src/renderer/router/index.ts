@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+// mainWindow系列
 import homeWindow from '@/renderer/Window/homeWindow.vue'
-
-console.log(homeWindow)
+import ApisView from '@/renderer/Window/home-window/ApisView.vue'
+import MockView from '@/renderer/Window/home-window/MockView.vue'
+import HistoryView from '@/renderer/Window/home-window/HistoryView.vue'
+import SettingView from '@/renderer/Window/home-window/SettingView.vue'
 
 export default createRouter({
   history: createWebHistory(),
@@ -13,7 +16,25 @@ export default createRouter({
     },
     {
       path: '/home',
-      component: homeWindow
+      component: homeWindow,
+      children: [
+        {
+          path: 'apis',
+          component: ApisView
+        },
+        {
+          path: 'mock',
+          component: MockView
+        },
+        {
+          path: 'history',
+          component: HistoryView
+        },
+        {
+          path: 'setting',
+          component: SettingView
+        }
+      ]
     }
   ]
 })

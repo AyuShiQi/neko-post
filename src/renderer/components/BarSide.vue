@@ -1,31 +1,39 @@
 <template>
   <div class="neko-bar-side">
     <ul class="neko-bar-side__option-list">
-      <li class="neko-bar-side__option-list-item">
-        <div class="icon-option">
-          <span class="iconfont icon-yingyong"></span>
-        </div>
-        <p class="neko-bar-side__option-list-item__title">APIs</p>
-      </li>
-      <li class="neko-bar-side__option-list-item">
-        <div class="icon-option">
-          <span class="iconfont icon-fuwuqi"></span>
-        </div>
-        <p class="neko-bar-side__option-list-item__title">Mock</p>
-      </li>
-      <li class="neko-bar-side__option-list-item">
-        <div class="icon-option">
-          <span class="iconfont icon-shuaxin"></span>
-        </div>
-        <p class="neko-bar-side__option-list-item__title">History</p>
-      </li>
+      <router-link to="/home/apis">
+        <li class="neko-bar-side__option-list-item">
+          <div class="icon-option">
+            <span class="iconfont icon-yingyong"></span>
+          </div>
+          <p class="neko-bar-side__option-list-item__title">APIs</p>
+        </li>
+      </router-link>
+      <router-link to="/home/mock">
+        <li class="neko-bar-side__option-list-item">
+          <div class="icon-option">
+            <span class="iconfont icon-fuwuqi"></span>
+          </div>
+          <p class="neko-bar-side__option-list-item__title">Mock</p>
+        </li>
+      </router-link>
+      <router-link to="/home/history">
+        <li class="neko-bar-side__option-list-item">
+          <div class="icon-option">
+            <span class="iconfont icon-shuaxin"></span>
+          </div>
+          <p class="neko-bar-side__option-list-item__title">History</p>
+        </li>
+      </router-link>
     </ul>
     <ul class="neko-bar-side__option-list option-bottom">
-      <li class="neko-bar-side__option-list-item">
-        <div class="icon-option">
-          <span class="iconfont icon-shezhi"></span>
-        </div>
-      </li>
+      <router-link to="/home/setting">
+        <li class="neko-bar-side__option-list-item">
+          <div class="icon-option">
+            <span class="iconfont icon-shezhi"></span>
+          </div>
+        </li>
+      </router-link>
     </ul>
   </div>
 </template>
