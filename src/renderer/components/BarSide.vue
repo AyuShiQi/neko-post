@@ -47,7 +47,7 @@
   width: 56px;
   height: 100%;
   padding: 16px 0;
-  background-color: var(--neko-content-bg-color);
+  background-color: var(--neko-bg-color);
   box-sizing: border-box;
   align-items: center;
   justify-content: space-between;
