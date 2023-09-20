@@ -156,6 +156,7 @@ onUnmounted(() => {
       box-sizing: border-box;
       box-shadow: inset 0 0 0 1px var(--neko-white-border-color);
       border-radius: var(--vi-card-radius);
+      backdrop-filter: blur(10px);
 
       li {
         display: flex;
