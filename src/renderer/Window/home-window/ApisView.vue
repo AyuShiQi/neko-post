@@ -36,27 +36,27 @@
       <!-- api展示区 -->
       <div class="neko-apis-list-scroll">
         <vi-scroll>
-          <vi-collapse title="用户相关接口" class="neko-apis-list-group">
+          <APIItemGroup title="用户相关接口">
             <APIItem/>
             <APIItem/>
             <APIItem/>
             <APIItem/>
             <APIItem/>
-          </vi-collapse>
-          <vi-collapse title="用户相关接口" class="neko-apis-list-group">
+          </APIItemGroup>
+          <APIItemGroup title="用户相关接口">
             <APIItem/>
             <APIItem/>
             <APIItem/>
             <APIItem/>
             <APIItem/>
-          </vi-collapse>
-          <vi-collapse title="用户相关接口" class="neko-apis-list-group">
+          </APIItemGroup>
+          <APIItemGroup title="用户相关接口">
             <APIItem/>
             <APIItem/>
             <APIItem/>
             <APIItem/>
             <APIItem/>
-          </vi-collapse>
+          </APIItemGroup>
         </vi-scroll>
       </div>
     </vi-flex>
@@ -66,7 +66,8 @@
 </template>
 
 <script lang="ts" setup>
-import APIItem from '@/renderer/components/APIItem.vue';
+import APIItem from '@/renderer/components/APIItem.vue'
+import APIItemGroup from '@/renderer/components/APIItemGroup.vue'
 </script>
 
 <style lang="less" scoped>
@@ -94,6 +95,7 @@ import APIItem from '@/renderer/components/APIItem.vue';
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      --vi-dropdown-gap: 4px;
 
       .neko-apis-list__header-add {
         width: 16px;
@@ -182,18 +184,6 @@ import APIItem from '@/renderer/components/APIItem.vue';
       height: calc(100% - 44px);
       --vi-scroll-width: 100%;
       --vi-scroll-height: 100%;
-
-      .neko-apis-list-group {
-        --vi-collapse-width: 100%;
-        min-width: 280px;
-        --vi-link-color: var(--neko-white-font-color);
-        border-top: 0;
-        border-bottom-color: var(--neko-main-bg-color);
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--neko-white-font-color);
-        user-select: none;
-      }
     }
   }
 

@@ -27,10 +27,12 @@
   width: 100%;
   padding: .6em .8em;
   align-items: center;
+  justify-content: space-between;
   color: var(--neko-white-font-color);
   border-radius: 1.2em;
   box-sizing: border-box;
   gap: 8px;
+  --vi-dropdown-gap: 4px;
 
   &:hover {
     box-shadow: inset 0 0 0 1px var(--vi-purple-color6);
@@ -70,12 +72,11 @@
   }
 
   .neko-api-item__delete-list {
-    position: absolute;
-    top: 0;
-    right: 0;
+    // position: absolute;
     width: 60px;
     // height: 170px;
-    padding: 6px;
+    padding: 4px;
+    margin-left: -35px;
     background-color: var(--vi-purple-color5);
     box-sizing: border-box;
     box-shadow: inset 0 0 0 1px var(--neko-white-border-color);
@@ -83,7 +84,7 @@
     backdrop-filter: blur(12px);
 
     > li {
-      padding: 6px;
+      padding: 4px;
       border-radius: 5px;
       cursor: pointer;
 
