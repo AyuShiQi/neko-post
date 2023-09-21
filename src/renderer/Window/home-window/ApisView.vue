@@ -33,19 +33,23 @@
           </template>
         </vi-input>
       </div>
+      <!-- 基础配置区 -->
+      <div class="neko-apis-list__base">
+        基础配置
+      </div>
       <!-- api展示区 -->
       <div class="neko-apis-list-scroll">
         <vi-scroll>
           <APIItemGroup title="用户相关接口">
-            <APIItem/>
-            <APIItem/>
-            <APIItem/>
-            <APIItem/>
-            <APIItem/>
+            <APIItem methods="get" title="用户登录"/>
+            <APIItem methods="post" title="用户注册"/>
+            <APIItem methods="patch" title="用户获取验证码"/>
+            <APIItem methods="delete" title="用户验证手机号"/>
+            <APIItem methods="options" title="用户发送邮箱验证码"/>
           </APIItemGroup>
           <APIItemGroup title="用户相关接口">
-            <APIItem/>
-            <APIItem/>
+            <APIItem methods="connect" title="用户token"/>
+            <APIItem methods="head" title="自动登录"/>
             <APIItem/>
             <APIItem/>
             <APIItem/>
@@ -60,14 +64,15 @@
         </vi-scroll>
       </div>
     </vi-flex>
-    <div class="neko-apis-workspace">
-    </div>
+    <!-- 工作区 -->
+    <WorkSpace/>
   </div>
 </template>
 
 <script lang="ts" setup>
 import APIItem from '@/renderer/components/APIItem.vue'
 import APIItemGroup from '@/renderer/components/APIItemGroup.vue'
+import WorkSpace from './APIs-view/WorkSpaceView.vue'
 </script>
 
 <style lang="less" scoped>
@@ -77,12 +82,13 @@ import APIItemGroup from '@/renderer/components/APIItemGroup.vue'
   height: 100%;
 
   .neko-apis-list {
-    --vi-flex-default-width: 160px;
-    --vi-flex-min-width: 160px;
-    --vi-flex-max-width: 300px;
+    overflow: hidden;
+    --vi-flex-default-width: 260px;
+    --vi-flex-min-width: 0px;
+    --vi-flex-max-width: 260px;
     --vi-flex-drag-active-color: var(--vi-purple-color6);
     padding: 0 4px;
-    background-color: var(--neko-content-bg-color);
+    background-color: var(--neko-bg-color);
     box-sizing: border-box;
 
     .neko-apis-list__header {
@@ -162,8 +168,8 @@ import APIItemGroup from '@/renderer/components/APIItemGroup.vue'
         --vi-input-width: auto;
         --vi-input-height: 24px;
         --vi-link-color: var(--neko-white-font-color);
-        --vi-background-color: var(--neko-content-bg-color);
-        --vi-background-color-deep: var(--neko-bg-color);
+        --vi-background-color: var(--neko-content-bg-color-s);
+        --vi-background-color-deep: var(--neko-content-bg-color);
         padding: .4em .6em;
         flex: 1;
 
@@ -179,19 +185,33 @@ import APIItemGroup from '@/renderer/components/APIItemGroup.vue'
       }
     }
 
+    .neko-apis-list__base {
+      overflow: hidden;
+      width: calc(100% - 12px);
+      padding: 6px;
+      margin: 6px;
+      color: var(--vi-purple-color1);
+      text-align: center;
+      background-color: transparent;
+      white-space: nowrap;
+      border-radius: 5px;
+      box-shadow: 0 0 0 1px var(--vi-purple-color1);
+      box-sizing: border-box;
+      user-select: none;
+      cursor: pointer;
+      transition: all 0.2s ease 0s;
+
+      &:hover {
+        background-color: var(--neko-content-bg-color-s);
+      }
+    }
+
     .neko-apis-list-scroll {
       width: 100%;
-      height: calc(100% - 44px);
+      height: calc(100% - 44px - 38px);
       --vi-scroll-width: 100%;
       --vi-scroll-height: 100%;
     }
-  }
-
-  .neko-apis-workspace {
-    width: 100px;
-    height: 100%;
-    flex: 1;
-    // background-color: var(--neko-main-bg-color);
   }
 }
 </style>

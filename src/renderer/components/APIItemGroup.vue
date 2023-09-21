@@ -28,7 +28,7 @@ function stopPropagation (e: Event) {
 <style lang="less" scoped>
 .neko-apis-list-group {
   --vi-collapse-width: 100%;
-  min-width: 280px;
+  min-width: 240px;
   --vi-link-color: var(--neko-white-font-color);
   border-top: 0;
   border-bottom-color: var(--neko-main-bg-color);

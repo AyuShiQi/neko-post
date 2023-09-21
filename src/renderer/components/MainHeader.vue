@@ -100,7 +100,7 @@ onUnmounted(() => {
   display: flex;
   width: 100%;
   height: 40px;
-  background-color: var(--neko-bg-color);
+  background-color: var(--neko-bg-color-s);
   justify-content: space-between;
   align-items: center;
   user-select: none;
