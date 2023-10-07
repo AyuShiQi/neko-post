@@ -40,26 +40,13 @@
       <!-- api展示区 -->
       <div class="neko-apis-list-scroll">
         <vi-scroll>
-          <APIItemGroup title="用户相关接口">
-            <APIItem methods="get" title="用户登录"/>
-            <APIItem methods="post" title="用户注册"/>
-            <APIItem methods="patch" title="用户获取验证码"/>
-            <APIItem methods="delete" title="用户验证手机号"/>
-            <APIItem methods="options" title="用户发送邮箱验证码"/>
-          </APIItemGroup>
-          <APIItemGroup title="用户相关接口">
-            <APIItem methods="connect" title="用户token"/>
-            <APIItem methods="head" title="自动登录"/>
-            <APIItem/>
-            <APIItem/>
-            <APIItem/>
-          </APIItemGroup>
-          <APIItemGroup title="用户相关接口">
-            <APIItem/>
-            <APIItem/>
-            <APIItem/>
-            <APIItem/>
-            <APIItem/>
+          <APIItemGroup v-for="pack of apiList" :key="pack.title" :title="pack.title">
+            <APIItem
+            v-for="item of pack.children"
+            :key="item.title"
+            :methods="(item.methods as any)"
+            :title="item.title"
+            @click="addTab(item)"/>
           </APIItemGroup>
         </vi-scroll>
       </div>
@@ -77,7 +64,33 @@ import WorkSpace from './APIs-view/WorkSpaceView.vue'
 import { reactive } from 'vue'
 
 // 这里是标签栏数组
-const tabList = reactive([]) as {value: string, methods: string}[]
+const tabList = reactive(new Map<string, {value: string, methods: string}>())
+const apiList = reactive([
+  {
+    title: '用户相关接口',
+    children: [
+      { methods: "get", title: "用户登录" },
+      { methods: "post", title: "用户注册" },
+      { methods: "patch", title: "用户获取验证码" },
+      { methods: "delete", title: "用户验证手机号" },
+      { methods: "options", title: "用户发送邮箱验证码" }
+    ]
+  },
+  {
+    title: '全局接口',
+    children: [
+      { methods: "connect", title: "用户token" },
+      { methods: "head", title: "自动登录" },
+    ]
+  }
+])
+
+function addTab (info: any) {
+  tabList.set(info.title, {
+    value: info.title,
+    methods: info.methods
+  })
+}
 </script>
 
 <style lang="less" scoped>

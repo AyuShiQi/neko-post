@@ -1,11 +1,10 @@
 <template>
   <div class="neko-apis-workspace">
     <vi-tab-card-group class="workspce-header" type="button" v-model="tabChoose">
-      <vi-tab-card value="1">
+      <vi-tab-card v-for="item of props.tabList.values()" :value="item.value">
         <template v-slot:icon>
-          <MethodSpan method="post"/>
+          <MethodSpan :method="item.methods"/>
         </template>
-        App.vue
       </vi-tab-card>
     </vi-tab-card-group>
     <vi-scroll class="workspace-content">
@@ -50,7 +49,7 @@
   import { ref } from 'vue'
 
   const props = defineProps<{
-    tabList: {value: string, methods: string}[]
+    tabList: Map<string, {value: string, methods: string}>
   }>()
   const tabChoose = ref()
 </script>
