@@ -19,9 +19,12 @@
   --neko-content-bg-color: rgba(17, 17, 18, 0.639);
   --neko-main-bg-color: rgba(71, 71, 71, 0.653);
   --neko-error-bg-color: rgba(227, 35, 35, 0.509);
+  --neko-tab-color-s: rgba(71, 71, 77, 0.194);
+  --neko-tab-color: rgba(14, 14, 16, 0.174);
   --neko-white-font-color-s: #fafafadb;
   --neko-white-font-color: #e4e4e4db;
   --neko-white-border-color: #a0a0a0db;
+  --neko-grey-font-color: #898989c3;
   --neko-purple-color: rgba(181,136,233,.5)
 }
 

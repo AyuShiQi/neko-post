@@ -65,7 +65,7 @@
       </div>
     </vi-flex>
     <!-- 工作区 -->
-    <WorkSpace/>
+    <WorkSpace :tabList="tabList"/>
   </div>
 </template>
 
@@ -73,6 +73,11 @@
 import APIItem from '@/renderer/components/APIItem.vue'
 import APIItemGroup from '@/renderer/components/APIItemGroup.vue'
 import WorkSpace from './APIs-view/WorkSpaceView.vue'
+
+import { reactive } from 'vue'
+
+// 这里是标签栏数组
+const tabList = reactive([]) as {value: string, methods: string}[]
 </script>
 
 <style lang="less" scoped>

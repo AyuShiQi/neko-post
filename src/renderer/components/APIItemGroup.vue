@@ -38,6 +38,7 @@ function stopPropagation (e: Event) {
   user-select: none;
   --vi-context-menu-width: 60px;
   --vi-context-menu-height: 48px;
+  --vi-context-menu-z-index: 100;
 
   .neko-apis-list-group__title {
     width: 100%;

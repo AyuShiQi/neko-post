@@ -1,9 +1,13 @@
 <template>
   <div class="neko-apis-workspace">
-    <div class="workspce-header">
-      <div></div>
-      <div></div>
-    </div>
+    <vi-tab-card-group class="workspce-header" type="button" v-model="tabChoose">
+      <vi-tab-card value="1">
+        <template v-slot:icon>
+          <MethodSpan method="post"/>
+        </template>
+        App.vue
+      </vi-tab-card>
+    </vi-tab-card-group>
     <vi-scroll class="workspace-content">
       <!-- 发送部分 -->
       <div class="workspace-content__send">
@@ -42,6 +46,13 @@
 </template>
 
 <script lang="ts" setup>
+  import MethodSpan from '@/renderer/components/MethodSpan.vue'
+  import { ref } from 'vue'
+
+  const props = defineProps<{
+    tabList: {value: string, methods: string}[]
+  }>()
+  const tabChoose = ref()
 </script>
 
 <style lang="less">
@@ -60,24 +71,30 @@
     --vi-background-color-base: transparent;
     --vi-background-color-deep: var(--neko-white-font-color);
     --vi-background-color: var(--neko-white-border-color);
+    color: var(--vi-font-color);
     width: 100px;
     height: 100%;
     flex: 1;
-    // background-color: var(--neko-main-bg-color);
 
     .workspce-header {
       width: 100%;
       height: 40px;
       background-color: var(--neko-content-bg-color);
-      border-left: 1px solid var(--neko-main-bg-color);
-      border-bottom: 1px solid var(--neko-main-bg-color);
       box-sizing: border-box;
+      --vi-tab-card-height: 40px;
+
+      --vi-background-color-solid: var(--neko-tab-color-s);
+      --vi-background-color-deep: var(--neko-tab-color);
+      --vi-bg-color-deep-alpha: var(--neko-bg-color-s);
+      --vi-bg-color-deeper-alpha: var(--neko-main-bg-color);
+      color: var(--neko-grey-font-color);
     }
 
     .workspace-content {
       --vi-scroll-width: 100%;
       --vi-scroll-height: calc(100% - 40px);
       background-color: var(--neko-content-bg-color);
+      color: var(--neko-white-border-color);
 
       .workspace-content__send {
         display: flex;
