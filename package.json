@@ -9,8 +9,10 @@
     "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "devDependencies": {
+    "@electron/rebuild": "^3.3.0",
     "@types/node": "^20.6.0",
     "@vitejs/plugin-vue": "^4.2.3",
+    "better-sqlite3": "^8.7.0",
     "electron": "^26.2.0",
     "electron-builder": "^24.6.4",
     "electron-rebuild": "^3.2.9",

@@ -3,6 +3,13 @@ import { CustomScheme } from "./CustomScheme";
 import { CommonWindowEvent } from "./CommonWindowEvent";
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 export let mainWindow: BrowserWindow;
+
+import Database from 'better-sqlite3'
+const db = new Database("db.db",
+{
+  verbose: console.log,
+  nativeBinding: "./node_modules/better-sqlite3/build/Release/better_sqlite3.node"
+});
 /**
  * app为electron全局对象，当electron初始化好后，触发ready事件
  */
