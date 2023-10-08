@@ -32,6 +32,7 @@ const props = withDefaults(defineProps<{
 
 const methods = computed(() => {
   const now = props.methods.toUpperCase()
+  console.log(now)
   switch (now) {
     case 'DELETE':
       return 'DEL'

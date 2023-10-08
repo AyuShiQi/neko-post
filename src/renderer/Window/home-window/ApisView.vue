@@ -90,6 +90,7 @@ function addTab (info: any) {
     value: info.title,
     methods: info.methods
   })
+  console.log(info)
 }
 </script>
 

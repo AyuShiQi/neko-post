@@ -3,14 +3,16 @@
     <vi-tab-card-group class="workspce-header" type="button" v-model="tabChoose">
       <vi-tab-card v-for="item of props.tabList.values()" :value="item.value">
         <template v-slot:icon>
-          <MethodSpan :method="item.methods"/>
+          <MethodSpan :methods="(item.methods as any)"/>
         </template>
       </vi-tab-card>
     </vi-tab-card-group>
     <vi-scroll class="workspace-content">
       <!-- 发送部分 -->
       <div class="workspace-content__send">
-        <vi-input type="plain" placeholder="请输入接口地址"
+        <vi-input
+        type="plain"
+        placeholder="请输入接口地址"
         class="workspace-content__send-input">
           <template v-slot:prefix>
             <vi-select class="neko-input-select">
@@ -29,15 +31,17 @@
       </div>
       <!-- 请求部分 -->
       <div class="workspace-content__request">
-        <p>Request</p>
-        <vi-nav>
+        <vi-nav @change="handleNavChange">
           <vi-nav-item>Params</vi-nav-item>
           <vi-nav-item>Authorization</vi-nav-item>
           <vi-nav-item>Headers</vi-nav-item>
           <vi-nav-item>Body</vi-nav-item>
         </vi-nav>
         <div class="nav-content">
-          
+          <ParamsContent v-if="navChoose === 0"></ParamsContent>
+          <AuthorizationContent v-else-if="navChoose === 1"></AuthorizationContent>
+          <HeadersContent v-else-if="navChoose === 2"></HeadersContent>
+          <BodyContent v-else></BodyContent>
         </div>
       </div>
     </vi-scroll>
@@ -46,12 +50,22 @@
 
 <script lang="ts" setup>
   import MethodSpan from '@/renderer/components/MethodSpan.vue'
+  import ParamsContent from './ParamsContent.vue'
+  import AuthorizationContent from './AuthorizationContent.vue'
+  import HeadersContent from './HeadersContent.vue'
+  import BodyContent from './BodyContent.vue'
   import { ref } from 'vue'
 
   const props = defineProps<{
     tabList: Map<string, {value: string, methods: string}>
   }>()
   const tabChoose = ref()
+  const navChoose = ref(0)
+
+  function handleNavChange (id: 0) {
+    console.log(id)
+    navChoose.value = id
+  }
 </script>
 
 <style lang="less">
@@ -174,6 +188,10 @@
         width: 100%;
         padding: 0 10px;
         box-sizing: border-box;
+
+        .nav-content {
+          margin-top: 16px;
+        }
       }
     }
   }
