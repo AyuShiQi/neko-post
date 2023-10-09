@@ -22,8 +22,8 @@ class BuildObj {
     delete localPkgJson.scripts;
     delete localPkgJson.devDependencies;
     localPkgJson.devDependencies = { electron: electronConfig };
-    localPkgJson.dependencies["better-sqlite3"] = "*";
-    localPkgJson.dependencies["bindings"] = "*";
+    // localPkgJson.dependencies["better-sqlite3"] = "*";
+    // localPkgJson.dependencies["bindings"] = "*";
     let tarJsonPath = path.join(process.cwd(), "dist", "package.json");
     fs.writeFileSync(tarJsonPath, JSON.stringify(localPkgJson));
     fs.mkdirSync(path.join(process.cwd(), "dist/node_modules"));
@@ -33,7 +33,7 @@ class BuildObj {
     let options = {
       config: {
         // 额外的资源打包
-        extraResources: [{ from: `./src/common/db.db`, to: `./` }],
+        extraResources: [{ from: `./src/common/user.json`, to: `./` }],
         directories: {
           output: path.join(process.cwd(), "release"),
           app: path.join(process.cwd(), "dist"),

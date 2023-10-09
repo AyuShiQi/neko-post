@@ -43,8 +43,6 @@ app.whenReady().then(() => {
 
 // 监听相关事件
 app.on("browser-window-created", (e, win) => {
+  console.log(e)
   CommonWindowEvent.regWinEvent(win);
 });
-
-const Database = require("better-sqlite3");
-const db = new Database("db.db");

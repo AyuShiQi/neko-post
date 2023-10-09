@@ -32,6 +32,7 @@ export class CommonWindowEvent {
       return this.getWin(e)?.isResizable();
     });
     ipcMain.handle("getPath", (e, name: any) => {
+      e
       return app.getPath(name);
     });
   }
