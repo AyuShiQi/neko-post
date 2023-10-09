@@ -118,8 +118,8 @@ export let buildPlugin = () => {
       buildObj.buildMain();
       buildObj.preparePackageJson();
       buildObj.buildInstaller();
-      buildObj.prepareSqlite();
-      buildObj.prepareKnexjs();
+      // buildObj.prepareSqlite();
+      // buildObj.prepareKnexjs();
     },
   };
 };
