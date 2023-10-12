@@ -27,7 +27,7 @@
             </vi-select>
           </template>
         </vi-input>
-        <vi-button class="workspace-content__send-btn" color="purple">Send</vi-button>
+        <vi-button class="workspace-content__send-btn" color="purple" @click="handleClick">Send</vi-button>
       </div>
       <!-- 请求部分 -->
       <div class="workspace-content__request">
@@ -55,6 +55,7 @@
   import HeadersContent from './HeadersContent.vue'
   import BodyContent from './BodyContent.vue'
   import { ref } from 'vue'
+  import axios from 'axios'
 
   const props = defineProps<{
     tabList: Map<string, {value: string, methods: string}>
@@ -65,6 +66,16 @@
   function handleNavChange (id: 0) {
     console.log(id)
     navChoose.value = id
+  }
+
+  function handleClick () {
+    axios.defaults.baseURL='http://localhost:3000'
+    axios({
+      method: 'get',
+      url: '/user/verify'
+    }).then(res => {
+      console.log(res.data)
+    })
   }
 </script>
 

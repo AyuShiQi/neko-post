@@ -32,7 +32,6 @@ export class CommonWindowEvent {
       return this.getWin(e)?.isResizable();
     });
     ipcMain.handle("getPath", (e, name: any) => {
-      e
       return app.getPath(name);
     });
   }
@@ -43,6 +42,7 @@ export class CommonWindowEvent {
     win.on("unmaximize", () => {
       win.webContents.send("windowUnmaximized");
     });
+
     //@ts-ignore
     win.webContents.setWindowOpenHandler((param) => {
       let config = {

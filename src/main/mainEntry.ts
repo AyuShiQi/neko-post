@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, session } from "electron";
 import { CustomScheme } from "./CustomScheme";
 import { CommonWindowEvent } from "./CommonWindowEvent";
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
@@ -7,6 +7,7 @@ export let mainWindow: BrowserWindow;
 /**
  * app为electron全局对象，当electron初始化好后，触发ready事件
  */
+app.commandLine.appendSwitch('disable-web-security');
 app.whenReady().then(() => {
   let config = {
     show: false,
@@ -19,7 +20,7 @@ app.whenReady().then(() => {
       webviewTag: true,
       spellcheck: false,
       disableHtmlFullscreenWindowResize: true,
-    },
+    }
   };
   // 创建一个主窗口
   mainWindow = new BrowserWindow(config);
@@ -38,6 +39,20 @@ app.whenReady().then(() => {
     // 这个用来加载一个外链地址
     mainWindow.loadURL(`app://index.html`);
   }
+
+  // 设置代理 
+  session.defaultSession.setProxy({
+    mode: 'fixed_servers',
+    proxyRules: 'http=http://127.0.0.1:3000;https=http://127.0.0.1:3000'
+  }).then(() => {
+    console.log(session.defaultSession)
+    mainWindow.webContents.session.setProxy({
+      mode: 'fixed_servers',
+      proxyRules: 'http=http://127.0.0.1:3000;https=http://127.0.0.1:3000',
+    }).then(() => {
+      console.log(mainWindow.webContents.session)
+    })
+  })
   CommonWindowEvent.listen();
 })
 
