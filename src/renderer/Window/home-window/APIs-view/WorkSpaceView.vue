@@ -69,7 +69,6 @@
   }
 
   function handleClick () {
-    axios.defaults.baseURL='http://localhost:3000'
     axios({
       method: 'get',
       url: '/user/verify'

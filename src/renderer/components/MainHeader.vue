@@ -5,7 +5,7 @@
         <img src="../assets/neko-logo.png" alt="logo">
       </div>
       <!-- 选项列表 -->
-      <vi-dropdown>
+      <vi-dropdown v-if="profileStore.isLogin">
         <div class="option-list">
           <span class="iconfont icon-daohang"></span>
         </div>
@@ -19,7 +19,7 @@
       </vi-dropdown>
     </div>
     <div class="neko-main-header__center">
-      center
+      欢迎使用neko post接口管理工具
     </div>
     <div class="neko-main-header__right">
       <div class="option-box" @click="minimizWindow">
@@ -39,6 +39,8 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ipcRenderer } from 'electron'
+import { useProfileStore } from '../store'
+const profileStore = useProfileStore()
 
 const isMaximized = ref(true)
 
@@ -183,6 +185,7 @@ onUnmounted(() => {
     flex: 1;
     justify-content: center;
     align-items: center;
+    color: var(--neko-white-font-color);
   }
   .neko-main-header__right {
     display: flex;
