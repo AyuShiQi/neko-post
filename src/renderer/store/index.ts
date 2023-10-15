@@ -13,6 +13,8 @@ export const useProfileStore = defineStore('profile', () => {
     if (isLogin.value) router.replace('/home')
     else router.replace('/login')
   })
+
+  // 先去获取数据
   return {
     isLogin,
     username

@@ -6,3 +6,15 @@ import { getAxios } from '.'
 //     url: '/user/base'
 //   })
 // }
+
+export function createNewUser (username: string, password: string) {
+  console.log(username, password)
+  getAxios({
+    method: 'post',
+    url: '/user/create',
+    data: {
+      username,
+      password
+    }
+  })
+}

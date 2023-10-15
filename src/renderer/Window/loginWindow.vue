@@ -45,6 +45,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useProfileStore } from '../store'
+import { createNewUser } from '../network/user'
 const profileStore = useProfileStore()
 const loginView = ref(false)
 
@@ -56,7 +57,8 @@ function goToLogin () {
 }
 
 function handleSubmit (fromMap: Map<string, string>, res: boolean) {
-    if (res) profileStore.isLogin = true
+  // if (res) profileStore.isLogin = true
+  createNewUser(username.value, password.value)
 }
 </script>
 

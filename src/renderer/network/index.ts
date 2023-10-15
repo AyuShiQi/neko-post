@@ -1,13 +1,9 @@
 import axios from 'axios'
+import type { AxiosRequestConfig } from 'axios'
 
 axios.defaults.baseURL='http://localhost:3000'
 
-type RequestOption = {
-  methods: string,
-  url: string
-}
-
-export function getAxios<T> (option: RequestOption): Promise<{
+export function getAxios<T = any> (option: AxiosRequestConfig<T>): Promise<{
   data: T,
   msg: string,
   code: number
@@ -16,10 +12,7 @@ export function getAxios<T> (option: RequestOption): Promise<{
     msg: string,
     code: number
   }>((resolve) => {
-    axios({
-      method: option.methods,
-      url: option.url
-    }).then(res => {
+    axios(option).then(res => {
       console.log(res.data)
       resolve(res.data)
     })
