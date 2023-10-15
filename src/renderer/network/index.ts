@@ -7,8 +7,15 @@ type RequestOption = {
   url: string
 }
 
-export function getAxios (option: RequestOption) {
-  const myAxios = new Promise((resolve) => {
+export function getAxios<T> (option: RequestOption): Promise<{
+  data: T,
+  msg: string,
+  code: number
+}> {
+  const myAxios = new Promise<{data: T,
+    msg: string,
+    code: number
+  }>((resolve) => {
     axios({
       method: option.methods,
       url: option.url
