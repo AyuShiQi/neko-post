@@ -16,7 +16,11 @@ generateNewFile()
 export function getUserInfo () {
   if (fs.existsSync(userPath)) {
     const userInfo = JSON.parse(fs.readFileSync(userPath, 'utf-8'))
-    return userInfo
+    return userInfo as {
+      username?: string,
+      password?: string,
+      token?: string
+    }
   }
   return null
 }
