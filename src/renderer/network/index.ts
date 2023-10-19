@@ -13,7 +13,7 @@ export function getAxios<T = any> (option: AxiosRequestConfig<T>): Promise<{
     code: number
   }>((resolve) => {
     axios(option).then(res => {
-      console.log(res.data)
+      console.log(option.url, res.data)
       resolve(res.data)
     })
   })

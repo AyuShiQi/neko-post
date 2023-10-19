@@ -95,3 +95,8 @@ p {
   background: url('./bg.png') center no-repeat;
   background-size: cover;
 }
+
+.vi-message {
+  --vi-background-color-deep: var(--neko-content-bg-color-solid);
+  --vi-info-background-color: var(--neko-white-font-color);
+}

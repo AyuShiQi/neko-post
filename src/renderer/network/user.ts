@@ -1,20 +1,13 @@
 import { getAxios } from '.'
 
-// export function getUserBase () {
-//   return getAxios({
-//     methods: 'get',
-//     url: '/user/base'
-//   })
-// }
-
 /**
  * 注册新用户
  * @param username 账户 
  * @param password 密码
  */
 export function createNewUser (username: string, password: string) {
-  console.log(username, password)
-  getAxios({
+  // console.log(username, password)
+  return getAxios({
     method: 'post',
     url: '/user/create',
     data: {
