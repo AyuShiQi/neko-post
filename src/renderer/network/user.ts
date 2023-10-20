@@ -7,7 +7,7 @@ import { getAxios } from '.'
  */
 export function createNewUser (username: string, password: string) {
   // console.log(username, password)
-  return getAxios({
+  return getAxios<{ token: string }>({
     method: 'post',
     url: '/user/create',
     data: {

@@ -86,46 +86,76 @@
 import { ref } from 'vue'
 import { useProfileStore } from '../store'
 import { createNewUser, login } from '../network/user'
-import { getUserInfo } from '@/common/user'
+import { getUserInfo, updateUserInfo } from '@/common/user'
 import { usernameRules, passwordRules, usernameRegisterRules, passwordRegisterRules } from '@/rules/user'
 import { ViMessage } from 'viog-ui'
 
+/**
+ * 仓库
+ */
 const profileStore = useProfileStore()
 
 const loginView = ref(false)
 const registerView = ref(false)
 const dialogView = ref(false)
 
+// 登录区
 const userInfo = getUserInfo()
 const username = ref(userInfo.username)
 const password = ref(userInfo.password)
+// 注册区
 const registerUsername = ref()
 const registerPassword = ref()
 const confirmRegisterPassword = ref()
+const tempRegisterToken = ref()
 
+/**
+ * 去登录注册页面
+ */
 function goToLogin () {
   loginView.value = true
 }
 
+/**
+ * 转换登录与注册
+ */
 function changeMethod () {
   registerView.value = !registerView.value
 }
 
+/**
+ * 获取登录提交
+ * @param fromMap 结果集
+ * @param res 结果
+ */
 function handleLoginSubmit (fromMap: Map<string, string>, res: boolean) {
   // if (res) profileStore.isLogin = true
+  if (!res) return
   login(username.value, password.value).then(val => {
     if (val.code === 200) {
       ViMessage.append('登陆成功')
       profileStore.isLogin = true
+      updateUserInfo({
+        username: username.value,
+        password: password.value,
+        token: val.data.token
+      })
     }
   })
 }
 
+/**
+ * 获取注册提交
+ * @param fromMap 结果集 
+ * @param res 结果
+ * @param param2 操作
+ */
 function handleRegisterSubmit (fromMap: Map<string, string>, res: boolean, { getSubmitFeedback }) {
   if (!res) return
   // if (res) profileStore.isLogin = true
   createNewUser(registerUsername.value, registerPassword.value).then(val => {
     if (val.code === 200) {
+      tempRegisterToken.value = val.data.token
       dialogView.value = true
     } else if (val.code === 500) {
       const feedBackMap = new Map<string, string>()
@@ -135,9 +165,21 @@ function handleRegisterSubmit (fromMap: Map<string, string>, res: boolean, { get
   })
 }
 
+/**
+ * 确定对话框
+ */
 function handleSure () {
   profileStore.isLogin = true
   dialogView.value = false
+  password.value = registerPassword.value
+  username.value = profileStore.username = registerUsername.value
+  profileStore.token = tempRegisterToken.value
+  // 自动保存注册信息至文件
+  updateUserInfo({
+    username: registerUsername.value,
+    password: registerPassword.value,
+    token: tempRegisterToken.value
+  })
 }
 </script>
 

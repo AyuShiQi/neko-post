@@ -18,23 +18,29 @@ export const useProfileStore = defineStore('profile', () => {
     else router.replace('/login')
   })
 
-  // 本地初始化信息获取
-  const localInfo = getUserInfo()
-  token.value = localInfo.token
-  // 自动登录
-  if (token.value) {
-    verifyToken(token.value).then(val => {
-      if (val.code === 200) {
-        isLogin.value = true
-        username.value = val.data.username
-      } else {
-        isLogin.value = false
-      }
-    })
+  function tokenLogin (newToken?: string) {
+    if (newToken) token.value = newToken
+    if (token.value) {
+      verifyToken(token.value).then(val => {
+        if (val.code === 200) {
+          isLogin.value = true
+          username.value = val.data.username
+        } else {
+          isLogin.value = false
+        }
+      })
+    }
   }
 
+  // 本地初始化信息获取
+  const localInfo = getUserInfo()
+  // 自动登录
+  tokenLogin(localInfo.token)
+
   return {
+    token,
     isLogin,
-    username
+    username,
+    tokenLogin
   }
 })

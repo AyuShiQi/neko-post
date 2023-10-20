@@ -25,7 +25,7 @@ export function getUserInfo () {
   return null
 }
 
-export function updateUserInfo (info: any) {
+export function updateUserInfo (info: { username?: string, password?: string, token?: string }) {
   generateNewDir()
   fs.writeFileSync(userPath, JSON.stringify(info))
 }
