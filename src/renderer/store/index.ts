@@ -12,6 +12,9 @@ export const useProfileStore = defineStore('profile', () => {
   const isLogin = ref(false)
   const username = ref()
   const token = ref()
+  const pid = ref()
+  // 是否成功加载项目
+  const isLoadedProject = ref(false)
 
   watch(isLogin, () => {
     if (isLogin.value) router.replace('/home')
@@ -25,6 +28,7 @@ export const useProfileStore = defineStore('profile', () => {
         if (val.code === 200) {
           isLogin.value = true
           username.value = val.data.username
+          // 去加载项目
         } else {
           isLogin.value = false
         }
@@ -32,8 +36,13 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
+  function loadProject () {
+    console.log(isLoadedProject.value)
+  }
+
   // 本地初始化信息获取
   const localInfo = getUserInfo()
+  pid.value = localInfo.pid
   // 自动登录
   tokenLogin(localInfo.token)
 
@@ -41,6 +50,9 @@ export const useProfileStore = defineStore('profile', () => {
     token,
     isLogin,
     username,
-    tokenLogin
+    pid,
+    isLoadedProject,
+    tokenLogin,
+    loadProject
   }
 })

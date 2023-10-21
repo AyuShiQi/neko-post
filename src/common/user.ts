@@ -12,22 +12,43 @@ let filePath = path.join(infoPath, "neko-post");
 
 generateNewFile()
 
+interface UserInfo {
+  username?: string,
+  password?: string,
+  token?: string,
+  pid?: string
+}
+
 
 export function getUserInfo () {
   if (fs.existsSync(userPath)) {
     const userInfo = JSON.parse(fs.readFileSync(userPath, 'utf-8'))
-    return userInfo as {
-      username?: string,
-      password?: string,
-      token?: string
-    }
+    return userInfo as UserInfo
   }
   return null
 }
 
-export function updateUserInfo (info: { username?: string, password?: string, token?: string }) {
+/**
+ * 用户信息全部修改
+ * @param info 信息 
+ */
+export function updateUserInfo (info: UserInfo) {
   generateNewDir()
   fs.writeFileSync(userPath, JSON.stringify(info))
+}
+
+/**
+ * 修改添加单项信息
+ * @param info 信息
+ */
+export function addUserInfo (info: UserInfo) {
+  generateNewDir()
+  let userInfo = getUserInfo()
+  if (!userInfo) userInfo = info
+  for (const name in info) {
+    userInfo[name] = info[name]
+  }
+  fs.writeFileSync(userPath, JSON.stringify(userInfo))
 }
 
 function generateNewDir () {

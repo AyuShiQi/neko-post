@@ -11,7 +11,7 @@
         </div>
         <template v-slot:content>
           <ul class="option-list__list">
-            <li>创建新项目</li>
+            <li @click="createNewProject">创建新项目</li>
             <li>打开项目</li>
             <li>设置</li>
           </ul>
@@ -84,6 +84,10 @@ function winMaximizeEvent () {
 }
 function winUnmaximizeEvent () {
   isMaximized.value = false
+}
+
+function createNewProject () {
+  
 }
 
 onMounted(() => {
