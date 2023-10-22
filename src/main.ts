@@ -9,7 +9,7 @@ import App from './App.vue'
 import { createPinia } from 'pinia'
 
 createApp(App)
-.use(router)
 .use(createPinia())
+.use(router)
 .use(Viog)
 .mount('#app')

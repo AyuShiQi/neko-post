@@ -1,9 +1,10 @@
-import { ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import router from '../router'
 
 import { getUserInfo } from '@/common/user'
 import { verifyToken } from '../network/user'
+import { getProjectList } from '../network/proj'
 
 /**
  * 用户信息注册
@@ -12,9 +13,13 @@ export const useProfileStore = defineStore('profile', () => {
   const isLogin = ref(false)
   const username = ref()
   const token = ref()
+  const uid = ref()
   const pid = ref()
   // 是否成功加载项目
   const isLoadedProject = ref(false)
+  const projectList = reactive({
+    list: []
+  })
 
   watch(isLogin, () => {
     if (isLogin.value) router.replace('/home')
@@ -27,13 +32,24 @@ export const useProfileStore = defineStore('profile', () => {
       verifyToken(token.value).then(val => {
         if (val.code === 200) {
           isLogin.value = true
+          uid.value = val.data.uid
           username.value = val.data.username
-          // 去加载项目
+          // 去加载项目列表 和 上一次打开项目
+          getProjectList(token.value, uid.value).then(val => {
+            projectList.list = val.data
+          })
         } else {
           isLogin.value = false
         }
       })
     }
+  }
+
+  function findProjectWithPname (pname: string): {pid: string, pname: string} | null {
+    for (const proj of projectList.list) {
+      if (proj[pname] === pname) return proj
+    }
+    return null
   }
 
   function loadProject () {
@@ -49,10 +65,13 @@ export const useProfileStore = defineStore('profile', () => {
   return {
     token,
     isLogin,
+    uid,
     username,
     pid,
     isLoadedProject,
+    projectList,
     tokenLogin,
-    loadProject
+    loadProject,
+    findProjectWithPname
   }
 })

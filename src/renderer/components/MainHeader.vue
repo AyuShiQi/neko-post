@@ -17,6 +17,7 @@
           </ul>
         </template>
       </vi-dropdown>
+      <NewProjectBox v-model="showNewProject"/>
     </div>
     <div class="neko-main-header__center">
       欢迎使用neko post接口管理工具
@@ -37,12 +38,14 @@
 </template>
 
 <script lang="ts" setup>
+import NewProjectBox from './NewProjectBox.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ipcRenderer } from 'electron'
 import { useProfileStore } from '../store'
 const profileStore = useProfileStore()
 
 const isMaximized = ref(true)
+const showNewProject = ref(false)
 
 // 下面是最大最小关闭事件
 function handleMaximizeWindow () {
@@ -87,7 +90,7 @@ function winUnmaximizeEvent () {
 }
 
 function createNewProject () {
-  
+  showNewProject.value = true
 }
 
 onMounted(() => {

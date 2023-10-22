@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { AxiosRequestConfig } from 'axios'
+import { useProfileStore } from '../store'
 
 axios.defaults.baseURL='http://localhost:3000'
 
