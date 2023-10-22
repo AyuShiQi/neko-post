@@ -35,9 +35,7 @@ export const useProfileStore = defineStore('profile', () => {
           uid.value = val.data.uid
           username.value = val.data.username
           // 去加载项目列表 和 上一次打开项目
-          getProjectList(token.value, uid.value).then(val => {
-            projectList.list = val.data
-          })
+          updateProjectList()
         } else {
           isLogin.value = false
         }
@@ -47,13 +45,19 @@ export const useProfileStore = defineStore('profile', () => {
 
   function findProjectWithPname (pname: string): {pid: string, pname: string} | null {
     for (const proj of projectList.list) {
-      if (proj[pname] === pname) return proj
+      if (proj.pname === pname) return proj
     }
     return null
   }
 
   function loadProject () {
     console.log(isLoadedProject.value)
+  }
+
+  function updateProjectList () {
+    getProjectList(token.value, uid.value).then(val => {
+      projectList.list = val.data
+    })
   }
 
   // 本地初始化信息获取
@@ -72,6 +76,7 @@ export const useProfileStore = defineStore('profile', () => {
     projectList,
     tokenLogin,
     loadProject,
-    findProjectWithPname
+    findProjectWithPname,
+    updateProjectList
   }
 })

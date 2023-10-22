@@ -48,7 +48,6 @@ function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
   console.log(res)
   // 查找这个项目是否存在
   const proj = profileStore.findProjectWithPname(pname.value)
-  console.log(proj)
   if (proj) {
     const resMap = new Map<string, string>()
     resMap.set('pname', '已存在相同项目名')
@@ -56,6 +55,8 @@ function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
   } else {
     // 创建
     createProject(profileStore.token, profileStore.uid, pname.value).then(val => {
+      // 更新列表
+      profileStore.updateProjectList()
       if (val.code === 200) {
         ViMessage.append('创建成功', 2000)
         handleShutdown()
