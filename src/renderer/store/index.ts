@@ -2,7 +2,7 @@ import { reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import router from '../router'
 
-import { getUserInfo } from '@/common/user'
+import { getUserInfo, addUserInfo } from '@/common/user'
 import { verifyToken } from '../network/user'
 import { getProjectList } from '../network/proj'
 
@@ -10,8 +10,19 @@ import { getProjectList } from '../network/proj'
  * 用户信息注册
  */
 export const useProfileStore = defineStore('profile', () => {
+  // 本地初始化信息获取
+  const localInfo = getUserInfo()
+  /**
+   * 是否登录
+   */
   const isLogin = ref(false)
+  /**
+   * 用户名
+   */
   const username = ref()
+  /**
+   * 用户token
+   */
   const token = ref()
   /**
    * 当前用户id
@@ -20,9 +31,14 @@ export const useProfileStore = defineStore('profile', () => {
   /**
    * 成功加载的项目
    */
-  const pid = ref()
-  // 是否成功加载项目
+  const pid = ref(localInfo.pid)
+  /**
+   * 是否成功加载项目
+   */
   const isLoadedProject = ref(false)
+  /**
+   * 项目列表
+   */
   const projectList = reactive({
     list: [],
     // 当前加载的项目
@@ -38,8 +54,16 @@ export const useProfileStore = defineStore('profile', () => {
   // 当目标项目改变时，改变list中的target
   watch(pid, () => {
     findTargetProject()
+    // 更新用户信息文件
+    addUserInfo({
+      pid: pid.value
+    })
   }, { immediate: true })
 
+  /**
+   * token登录
+   * @param newToken 新的token，可以选择传入 
+   */
   function tokenLogin (newToken?: string) {
     if (newToken) token.value = newToken
     if (token.value) {
@@ -57,6 +81,11 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
+  /**
+   * 通过项目名找到项目
+   * @param pname 项目名
+   * @returns 目标项目
+   */
   function findProjectWithPname (pname: string): {pid: string, pname: string} | null {
     for (const proj of projectList.list) {
       if (proj.pname === pname) return proj
@@ -64,18 +93,29 @@ export const useProfileStore = defineStore('profile', () => {
     return null
   }
 
-  function loadProject () {
-    console.log(isLoadedProject.value)
+  /**
+   * 加载项目
+   * @param newPid 新的pid 
+   */
+  function loadProject (newPid: string) {
+    if (newPid) pid.value = newPid
+    if (pid.value) isLoadedProject.value = true
   }
 
+  /**
+   * 更新项目列表
+   */
   function updateProjectList () {
     getProjectList(token.value, uid.value).then(val => {
       projectList.list = val.data
-      // 修改tartgry
+      // 修改target
       findTargetProject()
     })
   }
 
+  /**
+   * 找到目标项目
+   */
   function findTargetProject () {
     for (const proj of projectList.list) {
       if (proj.pid === pid.value) {
@@ -84,11 +124,10 @@ export const useProfileStore = defineStore('profile', () => {
         break
       }
     }
+    // 如果有那么需要改变一下加载信息
+    if (pid.value && projectList.target) isLoadedProject.value = true
   }
 
-  // 本地初始化信息获取
-  const localInfo = getUserInfo()
-  pid.value = localInfo.pid
   // 自动登录
   tokenLogin(localInfo.token)
 

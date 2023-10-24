@@ -24,7 +24,7 @@ export default createRouter({
     {
       path: '/home',
       component: homeWindow,
-      // redirect: '/home/apis',
+      redirect: '/home/apis',
       children: [
         {
           path: 'apis',

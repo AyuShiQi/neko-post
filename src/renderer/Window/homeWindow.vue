@@ -9,12 +9,14 @@
     </div>
     <div class="neko-home-workspace neko-home-project" v-show="!profileStore.isLoadedProject">
       <p class="project-item-title">打开已有项目</p>
-      <p
-      v-for="proj of profileStore.projectList.list"
-      :id="proj.pname"
-      class="project-item"
-      @click="handleOpenProject(proj.pid, proj.pname)"
-      >{{ proj.pname }}</p>
+      <vi-scroll>
+        <p class="project-item"
+        v-for="proj of profileStore.projectList.list"
+        :id="proj.pname"
+        @click="handleOpenProject(proj.pid, proj.pname)">
+          {{ proj.pname }}
+        </p>
+      </vi-scroll>
     </div>
   </div>
 </template>
@@ -60,6 +62,8 @@
       padding: 16px;
       background-color: var(--neko-content-bg-color);
       box-sizing: border-box;
+      --vi-scroll-width: 100%;
+      --vi-scroll-height: calc(100% - 22px);
 
       .project-item-title {
         padding-bottom: 8px;

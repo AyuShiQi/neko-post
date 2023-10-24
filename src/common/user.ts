@@ -49,6 +49,7 @@ export function addUserInfo (info: UserInfo) {
     userInfo[name] = info[name]
   }
   fs.writeFileSync(userPath, JSON.stringify(userInfo))
+  // console.log(userInfo, 'ok')
 }
 
 function generateNewDir () {

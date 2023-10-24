@@ -20,7 +20,7 @@
       <NewProjectBox v-model="showNewProject"/>
     </div>
     <div class="neko-main-header__center">
-      {{ profileStore.isLoadedProject ? profileStore.projectList.target.pname : '欢迎使用neko post接口管理工具' }}
+      {{ profileStore.isLoadedProject ? profileStore.projectList.target?.pname : '欢迎使用neko post接口管理工具' }}
     </div>
     <div class="neko-main-header__right">
       <div class="option-box" @click="minimizWindow">

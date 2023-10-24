@@ -28,7 +28,7 @@
       </vi-form>
     </div>
     <vi-dialog v-model="dialogOpen" @sure="handleDialogSure">
-      是否打开{{ pname }}？
+      是否打开 {{ pname }}？
     </vi-dialog>
   </div>
 </template>
@@ -101,8 +101,7 @@ function handleShutdown () {
  * 打开新项目
  */
 function openNewProject () {
-  profileStore.pid = pid.value
-  if (profileStore.pid) profileStore.isLoadedProject = true
+  profileStore.loadProject(pid.value)
 }
 
 /**
