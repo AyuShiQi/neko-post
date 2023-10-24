@@ -13,18 +13,32 @@ export const useProfileStore = defineStore('profile', () => {
   const isLogin = ref(false)
   const username = ref()
   const token = ref()
+  /**
+   * 当前用户id
+   */
   const uid = ref()
+  /**
+   * 成功加载的项目
+   */
   const pid = ref()
   // 是否成功加载项目
   const isLoadedProject = ref(false)
   const projectList = reactive({
-    list: []
+    list: [],
+    // 当前加载的项目
+    target: null
   })
 
+  // 当登录状态改变时，改变router路径
   watch(isLogin, () => {
     if (isLogin.value) router.replace('/home')
     else router.replace('/login')
   })
+
+  // 当目标项目改变时，改变list中的target
+  watch(pid, () => {
+    findTargetProject()
+  }, { immediate: true })
 
   function tokenLogin (newToken?: string) {
     if (newToken) token.value = newToken
@@ -57,7 +71,19 @@ export const useProfileStore = defineStore('profile', () => {
   function updateProjectList () {
     getProjectList(token.value, uid.value).then(val => {
       projectList.list = val.data
+      // 修改tartgry
+      findTargetProject()
     })
+  }
+
+  function findTargetProject () {
+    for (const proj of projectList.list) {
+      if (proj.pid === pid.value) {
+        // console.log(proj, proj.pid, pid.value)
+        projectList.target = proj
+        break
+      }
+    }
   }
 
   // 本地初始化信息获取

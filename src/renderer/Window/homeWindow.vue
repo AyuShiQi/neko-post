@@ -8,13 +8,13 @@
       <router-view></router-view>
     </div>
     <div class="neko-home-workspace neko-home-project" v-show="!profileStore.isLoadedProject">
-      <p>打开已有项目</p>
-      <span
+      <p class="project-item-title">打开已有项目</p>
+      <p
       v-for="proj of profileStore.projectList.list"
       :id="proj.pname"
       class="project-item"
       @click="handleOpenProject(proj.pid, proj.pname)"
-      >{{ proj.pname }}</span>
+      >{{ proj.pname }}</p>
     </div>
   </div>
 </template>
@@ -24,15 +24,17 @@
   import { ipcRenderer } from "electron"
   import { onMounted } from "vue"
   import { useProfileStore } from '../store'
+  import { toHomeApis } from '../router/index.op'
   const profileStore = useProfileStore()
 
   function handleOpenProject (pid: string, pname: string) {
     // 去查找proj
     const proj = profileStore.findProjectWithPname(pname)
     if (proj) {
-      console.log('ok')
+      // console.log('ok')
       profileStore.pid = pid
       profileStore.isLoadedProject = true
+      toHomeApis()
     }
   }
 
@@ -59,9 +61,13 @@
       background-color: var(--neko-content-bg-color);
       box-sizing: border-box;
 
+      .project-item-title {
+        padding-bottom: 8px;
+      }
+
       .project-item {
-        display: inline-block;
-        padding: 16px 0;
+        // display: inline-block;
+        padding: 8px 0;
         color: var(--neko-grey-font-color);
         user-select: none;
         cursor: pointer;

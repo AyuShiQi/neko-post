@@ -27,6 +27,9 @@
         </template>
       </vi-form>
     </div>
+    <vi-dialog v-model="dialogOpen" @sure="handleDialogSure">
+      是否打开{{ pname }}？
+    </vi-dialog>
   </div>
 </template>
 
@@ -41,7 +44,18 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['update:modelValue'])
 
+/**
+ * 新项目名
+ */
 const pname = ref()
+/**
+ * 新项目id
+ */
+const pid = ref()
+/**
+ * 询问是否打开项目的对话框
+ */
+const dialogOpen = ref(false)
 
 function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
   if (!res) return
@@ -59,7 +73,16 @@ function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
       profileStore.updateProjectList()
       if (val.code === 200) {
         ViMessage.append('创建成功', 2000)
-        handleShutdown()
+        pid.value = val.data.pid
+        // 检测是否已经有了打开项目
+        if (profileStore.isLoadedProject) {
+          // 打开对话框
+          dialogOpen.value = true
+        // 否则直接打开新项目
+        } else {
+          handleShutdown()
+          openNewProject()
+        }
       } else {
         ViMessage.append('创建失败，请重试！', 2000)
       }
@@ -67,8 +90,27 @@ function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
   }
 }
 
+/**
+ * 处理创建框退出
+ */
 function handleShutdown () {
   emit('update:modelValue', false)
+}
+
+/**
+ * 打开新项目
+ */
+function openNewProject () {
+  profileStore.pid = pid.value
+  if (profileStore.pid) profileStore.isLoadedProject = true
+}
+
+/**
+ * 对话框确认事件
+ */
+function handleDialogSure () {
+  openNewProject()
+  handleShutdown()
 }
 </script>
 

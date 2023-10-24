@@ -1,8 +1,12 @@
 <template>
   <div class="neko-bar-side">
-    <ul class="neko-bar-side__option-list">
+    <ul
+    class="neko-bar-side__option-list">
       <router-link to="/home/apis">
-        <li class="neko-bar-side__option-list-item">
+        <li class="neko-bar-side__option-list-item"
+        :class="{
+          'neko-bar-side__option-list-item_choose': curPath === '/home/apis'
+        }">
           <div class="icon-option">
             <span class="iconfont icon-yingyong"></span>
           </div>
@@ -10,7 +14,10 @@
         </li>
       </router-link>
       <router-link to="/home/mock">
-        <li class="neko-bar-side__option-list-item">
+        <li class="neko-bar-side__option-list-item"
+        :class="{
+          'neko-bar-side__option-list-item_choose': curPath === '/home/mock'
+        }">
           <div class="icon-option">
             <span class="iconfont icon-fuwuqi"></span>
           </div>
@@ -18,7 +25,10 @@
         </li>
       </router-link>
       <router-link to="/home/history">
-        <li class="neko-bar-side__option-list-item">
+        <li class="neko-bar-side__option-list-item"
+        :class="{
+          'neko-bar-side__option-list-item_choose': curPath === '/home/history'
+        }">
           <div class="icon-option">
             <span class="iconfont icon-shuaxin"></span>
           </div>
@@ -28,7 +38,10 @@
     </ul>
     <ul class="neko-bar-side__option-list option-bottom">
       <router-link to="/home/setting">
-        <li class="neko-bar-side__option-list-item">
+        <li class="neko-bar-side__option-list-item"
+        :class="{
+          'neko-bar-side__option-list-item_choose': curPath === '/home/setting'
+        }">
           <div class="icon-option">
             <span class="iconfont icon-shezhi"></span>
           </div>
@@ -39,6 +52,12 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const curPath = computed(() => router.currentRoute.value.path)
 </script>
 
 <style lang="less" scoped>
@@ -89,6 +108,10 @@
         }
         padding-bottom: 6px;
       }
+    }
+
+    .neko-bar-side__option-list-item_choose {
+      background-color: var(--vi-purple-color6);
     }
   }
 
