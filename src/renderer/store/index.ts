@@ -1,10 +1,12 @@
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, computed } from 'vue'
 import { defineStore } from 'pinia'
 import router from '../router'
 
 import { getUserInfo, addUserInfo } from '@/common/user'
 import { verifyToken } from '../network/user'
 import { getProjectList } from '../network/proj'
+import { getApiList as getApiListInterface, getBase, getGroupList } from '../network/api'
+import type { Api } from '../network'
 
 /**
  * 用户信息注册
@@ -45,6 +47,8 @@ export const useProfileStore = defineStore('profile', () => {
     target: null
   })
 
+  const pidEmitCb = [] as Array<() => void>
+
   // 当登录状态改变时，改变router路径
   watch(isLogin, () => {
     if (isLogin.value) router.replace('/home')
@@ -58,6 +62,10 @@ export const useProfileStore = defineStore('profile', () => {
     addUserInfo({
       pid: pid.value
     })
+    // 触发回调函数
+    for (const cb of pidEmitCb) {
+      cb()
+    }
   }, { immediate: true })
 
   /**
@@ -100,6 +108,7 @@ export const useProfileStore = defineStore('profile', () => {
   function loadProject (newPid: string) {
     if (newPid) pid.value = newPid
     if (pid.value) isLoadedProject.value = true
+    // 加载api
   }
 
   /**
@@ -128,6 +137,14 @@ export const useProfileStore = defineStore('profile', () => {
     if (pid.value && projectList.target) isLoadedProject.value = true
   }
 
+  /**
+   * 注册pid改变的回调函数
+   * @param cb 
+   */
+  function registerPid (cb: () => void) {
+    pidEmitCb.push(cb)
+  }
+
   // 自动登录
   tokenLogin(localInfo.token)
 
@@ -142,6 +159,113 @@ export const useProfileStore = defineStore('profile', () => {
     tokenLogin,
     loadProject,
     findProjectWithPname,
-    updateProjectList
+    updateProjectList,
+    registerPid
+  }
+})
+
+/**
+ * api接口信息
+ */
+export const useApiStore = defineStore('api', () => {
+  const profileStore = useProfileStore()
+  // 当前选中的api id号
+  const aid = ref()
+  // 当前聚焦的group id号
+  const gid = ref()
+  const apiList = reactive({
+    list: null,
+    group: null,
+    target: null,
+    base: null
+  })
+  const tabList = reactive(new Map()) as Map<string, Api>
+
+  const groupApi = computed(() => {
+    return (gid: string) => {
+      const targetList = [] as Api[]
+      for (const api of apiList.list) {
+        if (api.gid === gid) targetList.push(api)
+      }
+      return targetList
+    }
+  })
+
+  watch(aid, () => {
+    loadTargetApi()
+  })
+
+  // 监听pid改变
+  profileStore.registerPid(updateInfo)
+  updateInfo()
+
+  function updateInfo () {
+    // 重新获取list
+    getApiList()
+    // 重新获取base
+    loadBase()
+    // 重新获取group
+    loadGroupList()
+  }
+
+  function getApiList () {
+    // profileStore.pid
+    const { token, isLoadedProject, pid, uid } = profileStore
+    if (isLoadedProject) getApiListInterface(token, uid, pid).then(val => {
+      if (val.code === 200) {
+        apiList.list = val.data
+        loadTargetApi()
+      }
+    })
+  }
+
+  /**
+   * 加载target
+   * @param newAid 新的加载aid
+   */
+  function loadTargetApi (newAid?: string) {
+    if (newAid) aid.value = newAid
+    if (!aid.value) return
+    for (const api of apiList.list) {
+      if (api.aid === aid.value) {
+        apiList.target = api
+        break
+      }
+    }
+  }
+
+  function loadGroupList () {
+    const { token, pid, uid } = profileStore
+    getGroupList(token, uid, pid).then(val => {
+      if (val.code === 200) {
+        apiList.group = val.data
+      }
+    })
+  }
+
+  function loadBase () {
+    const { token, pid, uid } = profileStore
+    getBase(token, uid, pid).then(val => {
+      console.log('load base', val.data)
+      if (val.code === 200) apiList.base = val.data 
+    })
+  }
+
+  function addTab (aid: string, api: Api) {
+    tabList.set(aid, api)
+  }
+
+  function removeTab (aid: string) {
+    tabList.delete(aid)
+  }
+
+  return {
+    aid,
+    gid,
+    apiList,
+    tabList,
+    groupApi,
+    addTab,
+    removeTab
   }
 })

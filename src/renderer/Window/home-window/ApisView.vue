@@ -34,25 +34,25 @@
         </vi-input>
       </div>
       <!-- 基础配置区 -->
-      <div class="neko-apis-list__base">
+      <div class="neko-apis-list__base" @click="addTab(apiStore.apiList.base)">
         基础配置
       </div>
       <!-- api展示区 -->
       <div class="neko-apis-list-scroll">
         <vi-scroll>
-          <APIItemGroup v-for="pack of apiList" :key="pack.title" :title="pack.title">
+          <APIItemGroup v-for="group of apiStore.apiList.group" :key="group.title" :title="group.title">
             <APIItem
-            v-for="item of pack.children"
-            :key="item.title"
-            :methods="(item.methods as any)"
-            :title="item.title"
-            @click="addTab(item)"/>
+            v-for="api of apiStore.groupApi(group.gid)"
+            :key="api.title"
+            :methods="(api.method as any)"
+            :title="api.title"
+            @click="addTab(api)"/>
           </APIItemGroup>
         </vi-scroll>
       </div>
     </vi-flex>
     <!-- 工作区 -->
-    <WorkSpace :tabList="tabList"/>
+    <WorkSpace/>
   </div>
 </template>
 
@@ -62,35 +62,34 @@ import APIItemGroup from '@/renderer/components/APIItemGroup.vue'
 import WorkSpace from './APIs-view/WorkSpaceView.vue'
 
 import { reactive } from 'vue'
+import { useApiStore } from '@/renderer/store'
+import type { Api } from '@/renderer/network'
+const apiStore = useApiStore()
 
 // 这里是标签栏数组
-const tabList = reactive(new Map<string, {value: string, methods: string}>())
-const apiList = reactive([
-  {
-    title: '用户相关接口',
-    children: [
-      { methods: "get", title: "用户登录" },
-      { methods: "post", title: "用户注册" },
-      { methods: "patch", title: "用户获取验证码" },
-      { methods: "delete", title: "用户验证手机号" },
-      { methods: "options", title: "用户发送邮箱验证码" }
-    ]
-  },
-  {
-    title: '全局接口',
-    children: [
-      { methods: "connect", title: "用户token" },
-      { methods: "head", title: "自动登录" },
-    ]
-  }
-])
+// const tabList = reactive(new Map<string, {value: string, methods: string}>())
+// const apiList = reactive([
+//   {
+//     title: '用户相关接口',
+//     children: [
+//       { methods: "get", title: "用户登录" },
+//       { methods: "post", title: "用户注册" },
+//       { methods: "patch", title: "用户获取验证码" },
+//       { methods: "delete", title: "用户验证手机号" },
+//       { methods: "options", title: "用户发送邮箱验证码" }
+//     ]
+//   },
+//   {
+//     title: '全局接口',
+//     children: [
+//       { methods: "connect", title: "用户token" },
+//       { methods: "head", title: "自动登录" },
+//     ]
+//   }
+// ])
 
-function addTab (info: any) {
-  tabList.set(info.title, {
-    value: info.title,
-    methods: info.methods
-  })
-  console.log(info)
+function addTab (api: Api) {
+  apiStore.addTab(api.aid, api)
 }
 </script>
 

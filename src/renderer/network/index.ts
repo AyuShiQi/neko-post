@@ -21,3 +21,21 @@ export function getAxios<K = any, T = any> (option: AxiosRequestConfig<T>): Prom
   
   return myAxios
 }
+
+export type Api = {
+  aid: string
+  uid: string
+  pid: string
+  gid: string
+  title: string
+  desc: string
+  type: number // 0 基础 1 接口 2 分组
+  method: number
+  url: string
+  params: string
+  headers: string
+  authorization: string
+  body: string
+  update_time: Date
+  create_time: Date
+}
