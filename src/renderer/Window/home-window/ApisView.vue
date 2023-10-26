@@ -125,6 +125,7 @@ const groupName = ref()
 // ])
 
 function addTab (api: Api) {
+  apiStore.aid = api.aid
   apiStore.addTab(api.aid, api)
 }
 

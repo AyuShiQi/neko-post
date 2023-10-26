@@ -1,10 +1,11 @@
 <template>
   <div class="neko-apis-workspace">
-    <vi-tab-card-group class="workspce-header" type="button" v-model="tabChoose">
-      <vi-tab-card v-for="item of apiStore.tabList.values()" :value="item.title" :key="item">
+    <vi-tab-card-group class="workspce-header" type="button" v-model="apiStore.aid">
+      <vi-tab-card v-for="item of apiStore.tabList.values()" :value="item.aid" :key="item">
         <template v-slot:icon>
           <MethodSpan :methods="(item.method as any)"/>
         </template>
+        {{ item.title }}
       </vi-tab-card>
     </vi-tab-card-group>
     <vi-scroll class="workspace-content">
@@ -58,7 +59,6 @@
   import { useApiStore } from '@/renderer/store'
   const apiStore = useApiStore()
 
-  const tabChoose = ref()
   const navChoose = ref(0)
 
   function handleNavChange (id: 0) {
