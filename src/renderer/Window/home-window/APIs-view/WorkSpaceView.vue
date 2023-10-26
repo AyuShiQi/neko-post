@@ -1,7 +1,7 @@
 <template>
   <div class="neko-apis-workspace">
     <vi-tab-card-group class="workspce-header" type="button" v-model="tabChoose">
-      <vi-tab-card v-for="item of apiStore.tabList.values()" :value="item.title">
+      <vi-tab-card v-for="item of apiStore.tabList.values()" :value="item.title" :key="item">
         <template v-slot:icon>
           <MethodSpan :methods="(item.method as any)"/>
         </template>

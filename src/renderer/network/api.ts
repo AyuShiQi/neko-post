@@ -46,10 +46,11 @@ export function getGroupList (token: string, uid: string, pid: string) {
  * @param token 
  * @param uid
  * @param pid
- * @param title 标题 
+ * @param title 标题
+ * @param gid 
  * @returns 
  */
-export function createApi (token: string, uid: string, pid: string, title: string) {
+export function createApi (token: string, uid: string, pid: string, title: string, gid: string) {
   return getAxios<Api>({
     method: 'post',
     url: '/apis/create',
@@ -59,6 +60,7 @@ export function createApi (token: string, uid: string, pid: string, title: strin
     data: {
       uid,
       pid,
+      gid,
       title
     }
   })
@@ -69,10 +71,11 @@ export function createApi (token: string, uid: string, pid: string, title: strin
  * @param token 
  * @param uid
  * @param pid
- * @param title 标题 
+ * @param title 标题
+ * @param gid
  * @returns 
  */
-export function createApiGroup (token: string, uid: string, pid: string, title: string) {
+export function createApiGroup (token: string, uid: string, pid: string, title: string, gid: string) {
   return getAxios<Api>({
     method: 'post',
     url: '/apis/createGroup',
@@ -82,6 +85,7 @@ export function createApiGroup (token: string, uid: string, pid: string, title: 
     data: {
       uid,
       pid,
+      gid,
       title
     }
   })

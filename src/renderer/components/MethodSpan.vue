@@ -8,13 +8,13 @@
 <script lang="ts" setup>
 import { withDefaults, computed } from 'vue'
 const props = withDefaults(defineProps<{
-  methods: 'post' | 'get' | 'put' | 'head' | 'delete' | 'connect' | 'options' | 'patch'
+  methods: 'post' | 'get' | 'put' | 'head' | 'delete' | 'connect' | 'options' | 'patch' | null
 }>(), {
   methods: 'post'
 })
 
 const methods = computed(() => {
-  const now = props.methods.toUpperCase()
+  const now = props.methods?.toUpperCase()
   switch (now) {
     case 'DELETE':
       return 'DEL'

@@ -4,10 +4,10 @@
       'pointer-events': profileStore.isLoadedProject ? 'all' : 'none'
     }"/>
     <!-- 加载 -->
-    <div class="neko-home-workspace" v-show="profileStore.isLoadedProject">
+    <div class="neko-home-workspace" v-if="profileStore.isLoadedProject">
       <router-view></router-view>
     </div>
-    <div class="neko-home-workspace neko-home-project" v-show="!profileStore.isLoadedProject">
+    <div class="neko-home-workspace neko-home-project" v-else>
       <p class="project-item-title">打开已有项目</p>
       <vi-scroll>
         <p class="project-item"

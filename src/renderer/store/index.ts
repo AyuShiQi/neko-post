@@ -174,8 +174,8 @@ export const useApiStore = defineStore('api', () => {
   // 当前聚焦的group id号
   const gid = ref()
   const apiList = reactive({
-    list: null,
-    group: null,
+    list: [],
+    group: [],
     target: null,
     base: null
   })
@@ -185,6 +185,7 @@ export const useApiStore = defineStore('api', () => {
     return (gid: string) => {
       const targetList = [] as Api[]
       for (const api of apiList.list) {
+        console.log(api.gid, gid)
         if (api.gid === gid) targetList.push(api)
       }
       return targetList
@@ -201,14 +202,14 @@ export const useApiStore = defineStore('api', () => {
 
   function updateInfo () {
     // 重新获取list
-    getApiList()
+    loadApiList()
     // 重新获取base
     loadBase()
     // 重新获取group
     loadGroupList()
   }
 
-  function getApiList () {
+  function loadApiList () {
     // profileStore.pid
     const { token, isLoadedProject, pid, uid } = profileStore
     if (isLoadedProject) getApiListInterface(token, uid, pid).then(val => {
@@ -265,6 +266,8 @@ export const useApiStore = defineStore('api', () => {
     apiList,
     tabList,
     groupApi,
+    loadApiList,
+    loadGroupList,
     addTab,
     removeTab
   }
