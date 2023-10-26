@@ -185,7 +185,7 @@ export const useApiStore = defineStore('api', () => {
     return (gid: string) => {
       const targetList = [] as Api[]
       for (const api of apiList.list) {
-        console.log(api.gid, gid)
+        // console.log(api.gid, gid)
         if (api.gid === gid) targetList.push(api)
       }
       return targetList

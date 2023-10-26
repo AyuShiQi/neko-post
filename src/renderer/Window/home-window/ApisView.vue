@@ -47,6 +47,9 @@
         title="创建新分组"
         btnTitle="创建"
         @submit="handleCreateGroup">
+          <vi-form-item :rules="[{ rule: /./, info: '组名不可为空'}]" label="分组名">
+            <vi-input name="group_name" v-model="groupName" placeholder="请输入分组名"></vi-input>
+          </vi-form-item>
         </FormBox>
         <!-- 搜索框 -->
         <vi-input type="button" round placeholder="筛选接口" class="neko-apis-list__header-search">
@@ -70,7 +73,7 @@
           @click="addTab(api)"/>
           <APIItemGroup v-for="group of apiStore.apiList.group" :key="group.title" :title="group.title">
             <APIItem
-            v-for="api of apiStore.groupApi(group.gid)"
+            v-for="api of apiStore.groupApi(group.aid)"
             :key="api.title"
             :methods="(api.method as any)"
             :title="api.title"
@@ -92,7 +95,7 @@ import FormBox from '@/renderer/components/FormBox.vue'
 import { ref } from 'vue'
 import { ViMessage } from 'viog-ui'
 import { useApiStore, useProfileStore } from '@/renderer/store'
-import { createApi } from '@/renderer/network/api'
+import { createApi, createApiGroup } from '@/renderer/network/api'
 import type { Api } from '@/renderer/network'
 const apiStore = useApiStore()
 const profileStore = useProfileStore()
@@ -102,27 +105,6 @@ const createGroupOpen = ref(false)
 const apiName = ref()
 const apiGroup = ref()
 const groupName = ref()
-// 这里是标签栏数组
-// const tabList = reactive(new Map<string, {value: string, methods: string}>())
-// const apiList = reactive([
-//   {
-//     title: '用户相关接口',
-//     children: [
-//       { methods: "get", title: "用户登录" },
-//       { methods: "post", title: "用户注册" },
-//       { methods: "patch", title: "用户获取验证码" },
-//       { methods: "delete", title: "用户验证手机号" },
-//       { methods: "options", title: "用户发送邮箱验证码" }
-//     ]
-//   },
-//   {
-//     title: '全局接口',
-//     children: [
-//       { methods: "connect", title: "用户token" },
-//       { methods: "head", title: "自动登录" },
-//     ]
-//   }
-// ])
 
 function addTab (api: Api) {
   apiStore.aid = api.aid
@@ -155,6 +137,16 @@ function handleCreateApi (res: boolean, getSubmitFeedback: (m: Map<string, strin
 
 function handleCreateGroup (res: boolean, getSubmitFeedback: (m: Map<string, string>) => void) {
   if (!res) return
+  const { token, uid, pid } = profileStore
+  createApiGroup(token, uid, pid, groupName.value, null).then(val => {
+    if (val.code === 200) {
+      ViMessage.append('分组创建成功', 2000)
+      apiStore.loadGroupList()
+      createGroupOpen.value = false
+    } else {
+      ViMessage.append('分组创建失败，请重试！', 2000)
+    }
+  })
 }
 </script>
 
