@@ -174,10 +174,10 @@ export const useApiStore = defineStore('api', () => {
   // 当前聚焦的group id号
   const gid = ref()
   const apiList = reactive({
-    list: [],
-    group: [],
-    target: null,
-    base: null
+    list: [] as Api[],
+    group: [] as Api[],
+    target: null as Api,
+    base: null as Api
   })
   const tabList = reactive(new Map()) as Map<string, Api>
 
@@ -216,6 +216,8 @@ export const useApiStore = defineStore('api', () => {
       if (val.code === 200) {
         apiList.list = val.data
         loadTargetApi()
+        // 更换updateTab
+        updateTab()
       }
     })
   }
@@ -254,6 +256,17 @@ export const useApiStore = defineStore('api', () => {
 
   function addTab (aid: string, api: Api) {
     tabList.set(aid, api)
+  }
+
+  function updateTab () {
+    let change = 0
+    for(const api of apiList.list) {
+      if (tabList.has(api.aid)) {
+        tabList.set(api.aid, api)
+        change++
+      }
+      if (change >= tabList.size) break
+    }
   }
 
   function removeTab (aid: string) {

@@ -1,31 +1,39 @@
 <template>
   <span class="neko-methods-span"
   :class="[
-    `neko-api-item__methods-${methods}`
-  ]">{{ props.methods }}</span>
+    `neko-api-item__methods-${method}`
+  ]">{{ method }}</span>
 </template>
 
 <script lang="ts" setup>
 import { withDefaults, computed } from 'vue'
+import { Method } from '../network';
 const props = withDefaults(defineProps<{
-  methods: 'post' | 'get' | 'put' | 'head' | 'delete' | 'connect' | 'options' | 'patch' | null
+  methods: Method
 }>(), {
-  methods: 'post'
+  methods: 2
 })
 
-const methods = computed(() => {
-  const now = props.methods?.toUpperCase()
-  switch (now) {
-    case 'DELETE':
+const method = computed(() => {
+  switch (props.methods) {
+    case Method.get:
+      return 'GET'
+    case Method.put:
+      return 'PUT'
+    case Method.post:
+      return 'POST'
+    case Method.head:
+      return 'HEAD'
+    case Method.delete:
       return 'DEL'
-    case 'CONNECT':
+    case Method.connect:
       return 'CON'
-    case 'OPTIONS':
+    case Method.options:
       return 'OPT'
-    case 'PATCH':
+    case Method.patch:
       return 'PAT'
     default:
-      return now
+      return null
   }
 })
 </script>

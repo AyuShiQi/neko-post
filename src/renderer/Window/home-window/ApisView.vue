@@ -62,12 +62,12 @@
       <!-- api展示区 -->
       <div class="neko-apis-list-scroll">
         <vi-scroll>
-          <!-- <APIItem
+          <APIItem
           v-for="api of apiStore.groupApi(null)"
           :key="api.title"
           :methods="(api.method as any)"
           :title="api.title"
-          @click="addTab(api)"/> -->
+          @click="addTab(api)"/>
           <APIItemGroup v-for="group of apiStore.apiList.group" :key="group.title" :title="group.title">
             <APIItem
             v-for="api of apiStore.groupApi(group.gid)"

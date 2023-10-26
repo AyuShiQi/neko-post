@@ -3,8 +3,8 @@
     <p
     class="neko-api-item__methods"
     :class="[
-      `neko-api-item__methods-${methods ?? 'unknown'}`
-    ]">{{ methods ?? '未知' }}</p>
+      `neko-api-item__methods-${method ?? 'unknown'}`
+    ]">{{ method ?? '未知' }}</p>
     <p class="neko-api-item__title">{{ props.title }}</p>
     <vi-dropdown>
       <div class="neko-api-item__delete">
@@ -22,28 +22,36 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { Method } from '../network';
 const props = withDefaults(defineProps<{
   title: string,
-  methods: 'post' | 'get' | 'put' | 'head' | 'delete' | 'connect' | 'options' | 'patch' | null
+  methods: Method
 }>(), {
   title: '未命名接口你的未命名接口你的未命名接口你的',
-  methods: 'post'
+  methods: 2
 })
 
-const methods = computed(() => {
-  const now = props.methods.toUpperCase()
+const method = computed(() => {
   // console.log(now)
-  switch (now) {
-    case 'DELETE':
+  switch (props.methods) {
+    case Method.get:
+      return 'GET'
+    case Method.put:
+      return 'PUT'
+    case Method.post:
+      return 'POST'
+    case Method.head:
+      return 'HEAD'
+    case Method.delete:
       return 'DEL'
-    case 'CONNECT':
+    case Method.connect:
       return 'CON'
-    case 'OPTIONS':
+    case Method.options:
       return 'OPT'
-    case 'PATCH':
+    case Method.patch:
       return 'PAT'
     default:
-      return now
+      return null
   }
 })
 </script>

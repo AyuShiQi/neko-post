@@ -39,3 +39,15 @@ export type Api = {
   update_time: Date
   create_time: Date
 }
+
+export enum Method {
+  get,
+  put,
+  post,
+  head,
+  patch,
+  delete,
+  options,
+  connect,
+  none = null,
+}
