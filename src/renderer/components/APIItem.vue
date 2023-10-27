@@ -25,7 +25,7 @@ import { computed } from 'vue'
 import { Method } from '../network';
 const props = withDefaults(defineProps<{
   title: string,
-  methods: Method
+  methods: Method | null
 }>(), {
   title: '未命名接口你的未命名接口你的未命名接口你的',
   methods: 2

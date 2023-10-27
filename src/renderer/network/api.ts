@@ -105,3 +105,31 @@ export function getBase (token: string, uid: string, pid: string) {
     }
   })
 }
+
+export function updateApi (token: string, uid: string, pid: string, aid: string, type: number, update: {
+  gid?: string,
+  title?: string,
+  desc?: string,
+  method?: string,
+  url?: string,
+  params?: string,
+  headers?: string,
+  authorization?: string,
+  body?: string
+}) {
+  // console.log(username, password)
+  return getAxios<Api>({
+    method: 'post',
+    url: '/apis/update',
+    headers: {
+      token
+    },
+    data: {
+      uid,
+      pid,
+      aid,
+      type,
+      update
+    }
+  })
+}

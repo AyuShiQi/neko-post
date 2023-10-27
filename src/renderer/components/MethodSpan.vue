@@ -9,7 +9,7 @@
 import { withDefaults, computed } from 'vue'
 import { Method } from '../network';
 const props = withDefaults(defineProps<{
-  methods: Method
+  methods: Method | null
 }>(), {
   methods: 2
 })
