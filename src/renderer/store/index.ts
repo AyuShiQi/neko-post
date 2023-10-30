@@ -176,10 +176,11 @@ export const useApiStore = defineStore('api', () => {
   const apiList = reactive({
     list: [] as Api[],
     group: [] as Api[],
-    target: null as Api,
-    base: null as Api
+    target: {} as Api,
+    base: {} as Api
   })
   const tabList = reactive(new Map()) as Map<string, Api>
+  const watingUpdateTabList = reactive(new Set()) as Set<string>
 
   const groupApi = computed(() => {
     return (gid: string) => {
@@ -190,6 +191,10 @@ export const useApiStore = defineStore('api', () => {
       }
       return targetList
     }
+  })
+
+  const isWatingUpdate = computed(() => {
+    return (aid: string) => watingUpdateTabList.has(aid)
   })
 
   watch(aid, () => {
@@ -258,6 +263,9 @@ export const useApiStore = defineStore('api', () => {
     tabList.set(aid, api)
   }
 
+  /**
+   * 更新tabList中update后的信息
+   */
   function updateTab () {
     let change = 0
     for(const api of apiList.list) {
@@ -273,15 +281,34 @@ export const useApiStore = defineStore('api', () => {
     tabList.delete(aid)
   }
 
+  /**
+   * 添加待更新的列表
+   * @param aid 
+   */
+  function addWatingUpdateTab (aid: string) {
+    watingUpdateTabList.add(aid)
+  }
+
+  /**
+   * 溢出待更新的列表
+   * @param aid 
+   */
+  function removeWatingUpdateTab (aid: string) {
+    watingUpdateTabList.delete(aid)
+  }
+
   return {
     aid,
     gid,
     apiList,
     tabList,
     groupApi,
+    isWatingUpdate,
     loadApiList,
     loadGroupList,
     addTab,
-    removeTab
+    removeTab,
+    addWatingUpdateTab,
+    removeWatingUpdateTab
   }
 })

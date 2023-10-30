@@ -1,30 +1,43 @@
 <template>
   <div class="neko-apis-workspace">
     <vi-tab-card-group class="workspce-header" type="button" v-model="apiStore.aid">
-      <vi-tab-card v-for="item of apiStore.tabList.values()" :value="item.aid" :key="item">
+      <vi-tab-card
+      v-for="item of apiStore.tabList.values()"
+      :value="item.aid"
+      :key="item"
+      class="neko-tab-card-wating-update"
+      :class="[
+        {
+          'neko-tab-card-wating-update': apiStore.isWatingUpdate(item.aid)
+        }
+      ]">
         <template v-slot:icon>
           <MethodSpan :methods="(item.method as any)"/>
         </template>
         {{ item.title }}
       </vi-tab-card>
     </vi-tab-card-group>
-    <vi-scroll class="workspace-content">
+    <vi-scroll class="workspace-content" v-show="apiStore.aid">
       <!-- 发送部分 -->
       <div class="workspace-content__send">
         <vi-input
+        v-model="apiStore.apiList.target.url"
         type="plain"
         placeholder="请输入接口地址"
         class="workspace-content__send-input">
           <template v-slot:prefix>
-            <vi-select class="neko-input-select">
-              <vi-option class="get" value="get">GET</vi-option>
-              <vi-option class="put" value="put">PUT</vi-option>
-              <vi-option class="post" value="post">POST</vi-option>
-              <vi-option class="head" value="head">HEAD</vi-option>
-              <vi-option class="patch" value="patch">PATCH</vi-option>
-              <vi-option class="delete" value="delete">DELETE</vi-option>
-              <vi-option class="options" value="options">OPTIONS</vi-option>
-              <vi-option class="connect" value="connect">CONNECT</vi-option>
+            <vi-select
+            v-model="apiStore.apiList.target.method"
+            class="neko-input-select">
+              <vi-option class="get" :value="null">未知</vi-option>
+              <vi-option class="get" :value="0">GET</vi-option>
+              <vi-option class="put" :value="1">PUT</vi-option>
+              <vi-option class="post" :value="2">POST</vi-option>
+              <vi-option class="head" :value="3">HEAD</vi-option>
+              <vi-option class="patch" :value="4">PATCH</vi-option>
+              <vi-option class="delete" :value="5">DELETE</vi-option>
+              <vi-option class="options" :value="6">OPTIONS</vi-option>
+              <vi-option class="connect" :value="7">CONNECT</vi-option>
             </vi-select>
           </template>
         </vi-input>
@@ -46,6 +59,9 @@
         </div>
       </div>
     </vi-scroll>
+    <div class="workspace-content-temp" v-show="!apiStore.aid">
+      暂无打开接口
+    </div>
   </div>
 </template>
 
@@ -100,6 +116,21 @@
       --vi-bg-color-deep-alpha: var(--neko-bg-color-s);
       --vi-bg-color-deeper-alpha: var(--neko-main-bg-color);
       color: var(--neko-grey-font-color);
+
+      .neko-tab-card-wating-update {
+        position: relative;
+
+        &::after {
+          position: absolute;
+          content: "";
+          top: 4px;
+          right: 4px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: var(--neko-warning-bg-color);
+        }
+      }
     }
 
     .workspace-content {
@@ -192,6 +223,15 @@
           margin-top: 16px;
         }
       }
+    }
+
+    .workspace-content-temp {
+      display: flex;
+      width: 100%;
+      height: calc(100% - 40px);
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
     }
   }
 </style>

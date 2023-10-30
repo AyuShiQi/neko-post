@@ -30,7 +30,7 @@ export type Api = {
   title: string
   desc: string
   type: number // 0 基础 1 接口 2 分组
-  method: number
+  method: number | null
   url: string
   params: string
   headers: string
