@@ -5,7 +5,6 @@
       v-for="item of apiStore.tabList.values()"
       :value="item.aid"
       :key="item"
-      class="neko-tab-card-wating-update"
       :class="[
         {
           'neko-tab-card-wating-update': apiStore.isWatingUpdate(item.aid)
@@ -22,12 +21,14 @@
       <div class="workspace-content__send">
         <vi-input
         v-model="apiStore.apiList.target.url"
+        @update:modelValue="handleUpdate"
         type="plain"
         placeholder="请输入接口地址"
         class="workspace-content__send-input">
           <template v-slot:prefix>
             <vi-select
             v-model="apiStore.apiList.target.method"
+            @update:modelValue="handleUpdate"
             class="neko-input-select">
               <vi-option class="get" :value="null">未知</vi-option>
               <vi-option class="get" :value="0">GET</vi-option>
@@ -80,6 +81,10 @@
   function handleNavChange (id: 0) {
     // console.log(id)
     navChoose.value = id
+  }
+
+  function handleUpdate () {
+    apiStore.addWatingUpdateTab(apiStore.aid)
   }
 </script>
 

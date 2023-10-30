@@ -171,6 +171,7 @@ export const useApiStore = defineStore('api', () => {
   const profileStore = useProfileStore()
   // 当前选中的api id号
   const aid = ref()
+  const isChangeTarget = ref(false)
   // 当前聚焦的group id号
   const gid = ref()
   const apiList = reactive({
@@ -199,6 +200,7 @@ export const useApiStore = defineStore('api', () => {
 
   watch(aid, () => {
     loadTargetApi()
+    isChangeTarget.value = true
   })
 
   // 监听pid改变
