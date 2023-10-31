@@ -94,7 +94,7 @@ import APIItem from '@/renderer/components/APIItem.vue'
 import APIItemGroup from '@/renderer/components/APIItemGroup.vue'
 import WorkSpace from './APIs-view/WorkSpaceView.vue'
 import FormBox from '@/renderer/components/FormBox.vue'
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { ViMessage } from 'viog-ui'
 import { useApiStore, useProfileStore } from '@/renderer/store'
 import { createApi, createApiGroup } from '@/renderer/network/api'
@@ -150,6 +150,26 @@ function handleCreateGroup (res: boolean, getSubmitFeedback: (m: Map<string, str
     }
   })
 }
+
+function handleCtrlS (e: KeyboardEvent) {
+  // console.log(e)
+  if (e.ctrlKey && e.key === 's') {
+    if (!apiStore.watingUpdateTabList.has(apiStore.aid)) return
+    // 自动更新target
+    apiStore.updateApi(apiStore.apiList.target).then(val => {
+      if (val.code === 200) {
+        apiStore.removeWatingUpdateTab(apiStore.aid)
+      }
+    })
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleCtrlS)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleCtrlS)
+})
 </script>
 
 <style lang="less" scoped>
