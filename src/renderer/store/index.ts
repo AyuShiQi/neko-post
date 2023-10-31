@@ -249,20 +249,36 @@ export const useApiStore = defineStore('api', () => {
   function loadTargetApi (newAid?: string) {
     if (newAid) aid.value = newAid
     if (!aid.value) return
+    if (aid.value === apiList.base.aid) {
+      apiList.target = apiList.base
+      // 把目标变为对象
+      formatApi(apiList.base)
+      return
+    }
     for (const api of apiList.list) {
       if (api.aid === aid.value) {
         apiList.target = api
         // 把目标变为对象
-        if (typeof api.params === 'string') api.params = JSON.parse(api.params)
-        if (typeof api.body === 'string') api.body = JSON.parse(api.body)
-        if (typeof api.headers === 'string') api.headers = JSON.parse(api.headers)
-        if (typeof api.authorization === 'string') api.authorization = JSON.parse(api.authorization)
-        console.log(api)
-        break
+        formatApi(api)
+        return
+      }
+    }
+    apiList.target = null
+    function formatApi (api: Api) {
+      if (!(api.params instanceof Object)) api.params = JSON.parse(api.params) ?? {
+        target: []
+      }
+      if (!(api.body instanceof Object)) api.body = JSON.parse(api.body) ?? {
+        target: []
+      }
+      if (!(api.headers instanceof Object)) api.headers = JSON.parse(api.headers) ?? {
+        target: []
+      }
+      if (!(api.authorization instanceof Object)) api.authorization = JSON.parse(api.authorization) ?? {
+        target: []
       }
     }
   }
-
   /**
    * 加载groupList
    */
@@ -281,7 +297,7 @@ export const useApiStore = defineStore('api', () => {
   function loadBase () {
     const { token, pid, uid } = profileStore
     getBase(token, uid, pid).then(val => {
-      console.log('load base', val.data)
+      // console.log('load base', val.data)
       if (val.code === 200) apiList.base = val.data 
     })
   }

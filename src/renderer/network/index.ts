@@ -31,10 +31,10 @@ export type Api = {
   type: number // 0 基础 1 接口 2 分组
   method: number | null
   url: string
-  params: string | object
-  headers: string | object
-  authorization: string | object
-  body: string | object
+  params: string | Object
+  headers: string | Object
+  authorization: string | Object
+  body: string | Object
   update_time: Date
   create_time: Date
 }
