@@ -183,6 +183,9 @@ export const useApiStore = defineStore('api', () => {
   const tabList = reactive(new Map()) as Map<string, Api>
   const watingUpdateTabList = reactive(new Set()) as Set<string>
 
+  /**
+   * gid为aid的接口们
+   */
   const groupApi = computed(() => {
     return (gid: string) => {
       const targetList = [] as Api[]
@@ -194,6 +197,10 @@ export const useApiStore = defineStore('api', () => {
     }
   })
 
+  /**
+   * 判断一个接口是否待更新
+   * @params aid 接口id
+   */
   const isWatingUpdate = computed(() => {
     return (aid: string) => watingUpdateTabList.has(aid)
   })
@@ -207,6 +214,9 @@ export const useApiStore = defineStore('api', () => {
   profileStore.registerPid(updateInfo)
   updateInfo()
 
+  /**
+   * 更新api列表
+   */
   function updateInfo () {
     // 重新获取list
     loadApiList()
@@ -216,6 +226,9 @@ export const useApiStore = defineStore('api', () => {
     loadGroupList()
   }
 
+  /**
+   * 加载apiList
+   */
   function loadApiList () {
     // profileStore.pid
     const { token, isLoadedProject, pid, uid } = profileStore
@@ -239,11 +252,20 @@ export const useApiStore = defineStore('api', () => {
     for (const api of apiList.list) {
       if (api.aid === aid.value) {
         apiList.target = api
+        // 把目标变为对象
+        if (typeof api.params === 'string') api.params = JSON.parse(api.params)
+        if (typeof api.body === 'string') api.body = JSON.parse(api.body)
+        if (typeof api.headers === 'string') api.headers = JSON.parse(api.headers)
+        if (typeof api.authorization === 'string') api.authorization = JSON.parse(api.authorization)
+        console.log(api)
         break
       }
     }
   }
 
+  /**
+   * 加载groupList
+   */
   function loadGroupList () {
     const { token, pid, uid } = profileStore
     getGroupList(token, uid, pid).then(val => {
@@ -253,6 +275,9 @@ export const useApiStore = defineStore('api', () => {
     })
   }
 
+  /**
+   * 加载基础配置
+   */
   function loadBase () {
     const { token, pid, uid } = profileStore
     getBase(token, uid, pid).then(val => {
@@ -261,26 +286,44 @@ export const useApiStore = defineStore('api', () => {
     })
   }
 
+  /**
+   * 添加tab-card
+   * @param aid 接口id
+   * @param api 接口对象
+   */
   function addTab (aid: string, api: Api) {
     tabList.set(aid, api)
   }
 
+  /**
+   * 更新接口信息
+   * @param api api对象
+   * @returns
+   */
   function updateApi (api: string | Api) {
+    let target: Api
     if (typeof api === 'string') {
       // 寻找
-    } else {
-      return updateApiInterface(profileStore.token, profileStore.uid, profileStore.pid, api.aid, api.type, {
-        gid: api.gid,
-        title: api.title,
-        desc: api.desc,
-        method: api.method,
-        url: api.url,
-        params: api.params,
-        headers: api.headers,
-        authorization: api.authorization,
-        body: api.body
-      })
-    }
+      const aid = api
+      for (const api of apiList.list) {
+        if (api.aid === aid) {
+          target = api
+          break
+        }
+      }
+    } else target = api
+    if (!target) return Promise.resolve({ code: 500, msg: '', data: null })
+    return updateApiInterface(profileStore.token, profileStore.uid, profileStore.pid, target.aid, target.type, {
+      gid: target.gid,
+      title: target.title,
+      desc: target.desc,
+      method: target.method,
+      url: target.url,
+      params: JSON.stringify(target.params),
+      headers: JSON.stringify(target.headers),
+      authorization: JSON.stringify(target.authorization),
+      body: JSON.stringify(target.body)
+    })
   }
 
   /**

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import type { AxiosRequestConfig } from 'axios'
-import { useProfileStore } from '../store'
 
 axios.defaults.baseURL='http://localhost:3000'
 
@@ -32,10 +31,10 @@ export type Api = {
   type: number // 0 基础 1 接口 2 分组
   method: number | null
   url: string
-  params: string
-  headers: string
-  authorization: string
-  body: string
+  params: string | object
+  headers: string | object
+  authorization: string | object
+  body: string | object
   update_time: Date
   create_time: Date
 }

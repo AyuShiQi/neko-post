@@ -71,7 +71,10 @@
     v-model="saveDialog"
     class="neko-save-dialog"
     blur
-    @sure="handleSave">
+    sureTitle="保存"
+    unsureTitle="放弃更改"
+    @sure="handleSave"
+    @unSure="handleNoSave">
       该项目暂未保存，是否保存？
     </vi-dialog>
   </div>
@@ -131,6 +134,15 @@
         }
       })
     }
+  }
+
+  function handleNoSave () {
+    // 从待更新列表删除
+    apiStore.removeWatingUpdateTab(deleteAid)
+    apiStore.removeTab(deleteAid)
+    deleteAid = undefined
+    // 观察是不是当前打开的
+    apiStore.aid = apiStore.getTabApi()
   }
 </script>
 
