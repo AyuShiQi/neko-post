@@ -20,7 +20,7 @@
   --neko-content-bg-color-solid: rgba(17, 17, 18, 1);
   --neko-main-bg-color: rgba(71, 71, 71, 0.653);
   --neko-error-bg-color: rgba(227, 35, 35, 0.509);
-  --neko-warning-bg-color: rgb(255, 253, 137);
+  --neko-warning-bg-color: rgba(255, 254, 170, 0.858);
   --neko-tab-color-s: rgba(71, 71, 77, 0.194);
   --neko-tab-color: rgba(14, 14, 16, 0.174);
   --neko-white-font-color-s: #fafafadb;

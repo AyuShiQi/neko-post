@@ -70,11 +70,13 @@
           :key="api.title"
           :methods="(api.method as any)"
           :title="api.title"
+          :aid="api.aid"
           @click="addTab(api)"/>
           <APIItemGroup v-for="group of apiStore.apiList.group" :key="group.title" :title="group.title">
             <APIItem
             v-for="api of apiStore.groupApi(group.aid)"
             :key="api.title"
+            :aid="api.aid"
             :methods="(api.method as any)"
             :title="api.title"
             @click="addTab(api)"/>
@@ -285,7 +287,7 @@ function handleCreateGroup (res: boolean, getSubmitFeedback: (m: Map<string, str
       width: 100%;
       height: calc(100% - 44px - 38px);
       --vi-scroll-width: 100%;
-      --vi-scroll-height: 100%;
+      --vi-scroll-height: 100%
     }
   }
 }

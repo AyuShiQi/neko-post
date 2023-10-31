@@ -1,6 +1,10 @@
 <template>
   <div class="neko-apis-workspace">
-    <vi-tab-card-group class="workspce-header" type="button" v-model="apiStore.aid">
+    <vi-tab-card-group
+    class="workspce-header"
+    type="button"
+    v-model="apiStore.aid"
+    @delete="handleTabDelete">
       <vi-tab-card
       v-for="item of apiStore.tabList.values()"
       :value="item.aid"
@@ -16,7 +20,7 @@
         {{ item.title }}
       </vi-tab-card>
     </vi-tab-card-group>
-    <vi-scroll class="workspace-content" v-show="apiStore.aid">
+    <vi-scroll class="workspace-content" v-if="apiStore.aid">
       <!-- 发送部分 -->
       <div class="workspace-content__send">
         <vi-input
@@ -60,9 +64,16 @@
         </div>
       </div>
     </vi-scroll>
-    <div class="workspace-content-temp" v-show="!apiStore.aid">
+    <div class="workspace-content-temp" v-else>
       暂无打开接口
     </div>
+    <vi-dialog
+    v-model="saveDialog"
+    class="neko-save-dialog"
+    blur
+    @sure="handleSave">
+      该项目暂未保存，是否保存？
+    </vi-dialog>
   </div>
 </template>
 
@@ -74,9 +85,12 @@
   import BodyContent from './BodyContent.vue'
   import { ref } from 'vue'
   import { useApiStore } from '@/renderer/store'
+  import { ViMessage } from 'viog-ui'
   const apiStore = useApiStore()
 
+  let deleteAid: string
   const navChoose = ref(0)
+  const saveDialog = ref(false)
 
   function handleNavChange (id: 0) {
     // console.log(id)
@@ -86,6 +100,38 @@
   function handleUpdate () {
     apiStore.addWatingUpdateTab(apiStore.aid)
   }
+
+  function handleTabDelete (aid: string) {
+    // 如果在待更新列表中，需要先提醒一下（还未保存，是否保存）操作跳转
+    if (apiStore.isWatingUpdate(aid)) {
+      deleteAid = aid
+      saveDialog.value = true
+    } else {
+      // 观察是不是当前打开的
+      apiStore.removeTab(aid)
+      apiStore.aid = apiStore.getTabApi()
+    }
+  }
+
+  function handleSave () {
+    if (!deleteAid) return
+    const target = apiStore.tabList.get(deleteAid)
+    if (target) {
+      // 更新
+      apiStore.updateApi(target).then(val => {
+        if (val.code === 200) {
+          // 从待更新列表删除
+          apiStore.removeWatingUpdateTab(deleteAid)
+          apiStore.removeTab(deleteAid)
+          deleteAid = undefined
+          // 观察是不是当前打开的
+          apiStore.aid = apiStore.getTabApi()
+        } else {
+          ViMessage.append('保存失败！', 2000)
+        }
+      })
+    }
+  }
 </script>
 
 <style lang="less">
@@ -93,6 +139,10 @@
     .vi-select-box  {
       backdrop-filter: blur(20px);
     }
+  }
+
+  .neko-save-dialog {
+    --vi-dialog-background-color: var(--vi-purple-color6);
   }
 </style>
 

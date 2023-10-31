@@ -1,5 +1,10 @@
 <template>
-  <div class="neko-api-item">
+  <div class="neko-api-item"
+  :class="[
+    {
+      'neko-api-item-wating-update': apiStore.isWatingUpdate(props.aid)
+    }
+  ]">
     <p
     class="neko-api-item__methods"
     :class="[
@@ -22,8 +27,11 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { Method } from '../network';
+import { Method } from '../network'
+import { useApiStore } from '../store'
+const apiStore = useApiStore()
 const props = withDefaults(defineProps<{
+  aid: string,
   title: string,
   methods: Method | null
 }>(), {
@@ -166,6 +174,12 @@ const method = computed(() => {
         background-color: var(--vi-purple-color6);
       }
     }
+  }
+}
+
+.neko-api-item-wating-update {
+  .neko-api-item__title {
+    color: var(--neko-warning-bg-color);
   }
 }
 </style>

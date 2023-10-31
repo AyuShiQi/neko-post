@@ -5,7 +5,7 @@ import router from '../router'
 import { getUserInfo, addUserInfo } from '@/common/user'
 import { verifyToken } from '../network/user'
 import { getProjectList } from '../network/proj'
-import { getApiList as getApiListInterface, getBase, getGroupList } from '../network/api'
+import { getApiList as getApiListInterface, getBase, getGroupList, updateApi as updateApiInterface} from '../network/api'
 import type { Api } from '../network'
 
 /**
@@ -265,6 +265,24 @@ export const useApiStore = defineStore('api', () => {
     tabList.set(aid, api)
   }
 
+  function updateApi (api: string | Api) {
+    if (typeof api === 'string') {
+      // 寻找
+    } else {
+      return updateApiInterface(profileStore.token, profileStore.uid, profileStore.pid, api.aid, api.type, {
+        gid: api.gid,
+        title: api.title,
+        desc: api.desc,
+        method: api.method,
+        url: api.url,
+        params: api.params,
+        headers: api.headers,
+        authorization: api.authorization,
+        body: api.body
+      })
+    }
+  }
+
   /**
    * 更新tabList中update后的信息
    */
@@ -283,6 +301,13 @@ export const useApiStore = defineStore('api', () => {
     tabList.delete(aid)
   }
 
+  function getTabApi () {
+    for (const aid of tabList.keys() as any) {
+      return aid
+    }
+    return null
+  }
+
   /**
    * 添加待更新的列表
    * @param aid 
@@ -299,18 +324,29 @@ export const useApiStore = defineStore('api', () => {
     watingUpdateTabList.delete(aid)
   }
 
+  function getAWatingUpdateAid () {
+    for (const aid of watingUpdateTabList.values() as any) {
+      return aid
+    }
+    return null
+  }
+
   return {
     aid,
     gid,
     apiList,
     tabList,
     groupApi,
+    watingUpdateTabList,
     isWatingUpdate,
+    updateApi,
     loadApiList,
     loadGroupList,
     addTab,
     removeTab,
+    getTabApi,
     addWatingUpdateTab,
-    removeWatingUpdateTab
+    removeWatingUpdateTab,
+    getAWatingUpdateAid
   }
 })
