@@ -15,6 +15,8 @@
   extension
   multi
   v-model="inputValue"
+  :pickValue="pickValue"
+  @pick="handlePickValueChange"
   @input="handleUpdate">
     <vi-input-table-col value="key" style="--vi-table-td-width: 180px"></vi-input-table-col>
     <vi-input-table-col value="value" style="--vi-table-td-width: 280px"></vi-input-table-col>
@@ -32,10 +34,27 @@ const apiStore = useApiStore()
 
 const inputValue = computed(() => {
   const body = apiStore.apiList.target.body
-  return body instanceof Object ? (body as any)?.target : []
+  if (body instanceof Object) {
+    if (!(body.target instanceof Array)) body.target = []
+    return body.target
+  }
+  return []
+})
+
+const pickValue = computed(() => {
+  const body = apiStore.apiList.target.body
+  if (body instanceof Object) {
+    if (!(body.pick instanceof Array)) body.pick = []
+    return body.pick
+  }
+  return []
 })
 
 function handleUpdate () {
+  apiStore.addWatingUpdateTab(apiStore.aid)
+}
+
+function handlePickValueChange () {
   apiStore.addWatingUpdateTab(apiStore.aid)
 }
 </script>
