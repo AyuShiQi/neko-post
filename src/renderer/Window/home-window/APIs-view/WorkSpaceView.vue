@@ -147,11 +147,29 @@
 
   function handleNoSave () {
     // 从待更新列表删除
-    apiStore.removeWatingUpdateTab(deleteAid)
-    apiStore.removeTab(deleteAid)
-    deleteAid = undefined
-    // 观察是不是当前打开的
-    apiStore.aid = apiStore.getTabApi()
+    // 从远端获取更新
+    if (deleteAid === apiStore.apiList.base.aid) {
+      apiStore.loadBase().then(val => {
+        handleSucess(val.code)
+      })
+    } else {
+      apiStore.loadApiList().then(val => {
+        handleSucess(val.code)
+      })
+    }
+
+    function handleSucess (code: number) {
+      // 成功更新了
+      if (code === 200) {
+        apiStore.removeWatingUpdateTab(deleteAid)
+        apiStore.removeTab(deleteAid)
+        // 观察是不是当前打开的
+        apiStore.aid = apiStore.getTabApi()
+      } else {
+        ViMessage.append('操作失败！', 2000)
+      }
+      deleteAid = undefined
+    }
   }
 </script>
 

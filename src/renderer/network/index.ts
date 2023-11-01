@@ -3,11 +3,13 @@ import type { AxiosRequestConfig } from 'axios'
 
 axios.defaults.baseURL='http://localhost:3000'
 
-export function getAxios<K = any, T = any> (option: AxiosRequestConfig<T>): Promise<{
+export type Result<K = any> = {
   data: K,
   msg: string,
   code: number
-}> {
+}
+
+export function getAxios<K = any, T = any> (option: AxiosRequestConfig<T>): Promise<Result<K>> {
   const myAxios = new Promise<{data: K,
     msg: string,
     code: number
