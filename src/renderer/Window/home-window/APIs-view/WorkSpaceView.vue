@@ -24,6 +24,15 @@
       <!-- 发送部分 -->
       <div class="workspace-content__send">
         <vi-input
+        v-if="apiStore.isBaseOpen"
+        v-model="apiStore.apiList.target.url"
+        @update:modelValue="handleUpdate"
+        type="plain"
+        placeholder="请输入基础接口地址"
+        class="workspace-content__send-input">
+        </vi-input>
+        <vi-input
+        v-else
         v-model="apiStore.apiList.target.url"
         @update:modelValue="handleUpdate"
         type="plain"

@@ -180,7 +180,17 @@ export const useApiStore = defineStore('api', () => {
     target: {} as Api,
     base: {} as Api
   })
+  /**
+   * 是否是基础配置
+   */
+  const isBaseOpen = computed(() => aid.value === apiList.base.aid)
+  /**
+   * 已打开接口列表
+   */
   const tabList = reactive(new Map()) as Map<string, Api>
+  /**
+   * 待更新接口列表
+   */
   const watingUpdateTabList = reactive(new Set()) as Set<string>
 
   /**
@@ -394,6 +404,7 @@ export const useApiStore = defineStore('api', () => {
     aid,
     gid,
     apiList,
+    isBaseOpen,
     tabList,
     groupApi,
     watingUpdateTabList,
