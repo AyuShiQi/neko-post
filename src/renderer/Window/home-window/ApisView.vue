@@ -37,7 +37,8 @@
         </vi-input>
       </div>
       <!-- 基础配置区 -->
-      <div class="neko-apis-list__base" @click="addTab(apiStore.apiList.base)">
+      <div class="neko-apis-list__base"
+      @click="addTab(apiStore.apiList.base)">
         基础配置
       </div>
       <!-- api展示区 -->
@@ -46,18 +47,17 @@
           <APIItem
           v-for="api of apiStore.groupApi(null)"
           :key="api.title"
-          :methods="(api.method as any)"
-          :title="api.title"
-          :aid="api.aid"
+          :api="api"
           @click="addTab(api)"/>
-          <APIItemGroup v-for="group of apiStore.apiList.group" :key="group.title" :title="group.title"
+          <APIItemGroup
+          v-for="group of apiStore.apiList.group"
+          :key="group.title"
+          :title="group.title"
           @click="focusGroupMenu($event, group.aid)">
             <APIItem
             v-for="api of apiStore.groupApi(group.aid)"
             :key="api.title"
-            :aid="api.aid"
-            :methods="(api.method as any)"
-            :title="api.title"
+            :api="api"
             @click="addTab(api)"/>
           </APIItemGroup>
         </vi-scroll>
@@ -75,29 +75,34 @@ import WorkSpace from './APIs-view/WorkSpaceView.vue'
 import CreateApiBox from '@/renderer/components/CreateApiBox.vue'
 import CreateGroupBox from '@/renderer/components/CreateGroupBox.vue'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { useApiStore, useProfileStore } from '@/renderer/store'
+import { useApiStore } from '@/renderer/store'
 import type { Api } from '@/renderer/network'
 const apiStore = useApiStore()
-const profileStore = useProfileStore()
 
 const createApiOpen = ref(false)
 const createGroupOpen = ref(false)
 
-function addTab (api: Api) {
-  apiStore.aid = api.aid
-  apiStore.addTab(api.aid, api)
-}
-
 function openCreateApi () {
-  // createApi()
   createApiOpen.value = true
 }
 
 function openCreateGroup () {
-  // createApi()
   createGroupOpen.value = true
 }
 
+/**
+ * 将接口添加到编辑列表中
+ * @param api 
+ */
+ function addTab (api: Api) {
+  apiStore.aid = api.aid
+  apiStore.addTab(api.aid, api)
+}
+
+/**
+ * ctrl + s自动保存接口
+ * @param e 
+ */
 function handleCtrlS (e: KeyboardEvent) {
   // console.log(e)
   if (e.ctrlKey && e.key === 's') {
