@@ -27,30 +27,8 @@
           </template>
         </vi-dropdown>
         <!-- 以下是接口与分组的Form盒子 -->
-        <FormBox
-        v-model="createApiOpen"
-        title="创建新接口"
-        btnTitle="创建"
-        @submit="handleCreateApi">
-          <vi-form-item :rules="[{ rule: /./, info: '接口名不可为空'}]" label="接口名">
-            <vi-input name="api_name" v-model="apiName" placeholder="请输入接口名"></vi-input>
-          </vi-form-item>
-          <vi-form-item label="所属分组">
-            <vi-select name="group" v-model="apiGroup" placeholder="请选择分组">
-              <vi-option value="none" selected>无</vi-option>
-              <vi-option v-for="group of apiStore.apiList.group" :value="group.aid">{{ group.title }}</vi-option>
-            </vi-select>
-          </vi-form-item>
-        </FormBox>
-        <FormBox
-        v-model="createGroupOpen"
-        title="创建新分组"
-        btnTitle="创建"
-        @submit="handleCreateGroup">
-          <vi-form-item :rules="[{ rule: /./, info: '组名不可为空'}]" label="分组名">
-            <vi-input name="group_name" v-model="groupName" placeholder="请输入分组名"></vi-input>
-          </vi-form-item>
-        </FormBox>
+        <CreateApiBox v-model="createApiOpen"/>
+        <CreateGroupBox v-model="createGroupOpen"/>
         <!-- 搜索框 -->
         <vi-input type="button" round placeholder="筛选接口" class="neko-apis-list__header-search">
           <template v-slot:prefix>
@@ -64,7 +42,7 @@
       </div>
       <!-- api展示区 -->
       <div class="neko-apis-list-scroll">
-        <vi-scroll>
+        <vi-scroll @click="focusRootMenu">
           <APIItem
           v-for="api of apiStore.groupApi(null)"
           :key="api.title"
@@ -72,7 +50,8 @@
           :title="api.title"
           :aid="api.aid"
           @click="addTab(api)"/>
-          <APIItemGroup v-for="group of apiStore.apiList.group" :key="group.title" :title="group.title">
+          <APIItemGroup v-for="group of apiStore.apiList.group" :key="group.title" :title="group.title"
+          @click="focusGroupMenu($event, group.aid)">
             <APIItem
             v-for="api of apiStore.groupApi(group.aid)"
             :key="api.title"
@@ -93,20 +72,16 @@
 import APIItem from '@/renderer/components/APIItem.vue'
 import APIItemGroup from '@/renderer/components/APIItemGroup.vue'
 import WorkSpace from './APIs-view/WorkSpaceView.vue'
-import FormBox from '@/renderer/components/FormBox.vue'
+import CreateApiBox from '@/renderer/components/CreateApiBox.vue'
+import CreateGroupBox from '@/renderer/components/CreateGroupBox.vue'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { ViMessage } from 'viog-ui'
 import { useApiStore, useProfileStore } from '@/renderer/store'
-import { createApi, createApiGroup } from '@/renderer/network/api'
 import type { Api } from '@/renderer/network'
 const apiStore = useApiStore()
 const profileStore = useProfileStore()
 
 const createApiOpen = ref(false)
 const createGroupOpen = ref(false)
-const apiName = ref()
-const apiGroup = ref()
-const groupName = ref()
 
 function addTab (api: Api) {
   apiStore.aid = api.aid
@@ -123,34 +98,6 @@ function openCreateGroup () {
   createGroupOpen.value = true
 }
 
-function handleCreateApi (res: boolean, getSubmitFeedback: (m: Map<string, string>) => void) {
-  if (!res) return
-  const { token, uid, pid } = profileStore
-  createApi(token, uid, pid, apiName.value, apiGroup.value === 'none' ? null : apiGroup.value).then(val => {
-    if (val.code === 200) {
-      ViMessage.append('接口创建成功', 2000)
-      apiStore.loadApiList()
-      createApiOpen.value = false
-    } else {
-      ViMessage.append('接口创建失败，请重试！', 2000)
-    }
-  })
-}
-
-function handleCreateGroup (res: boolean, getSubmitFeedback: (m: Map<string, string>) => void) {
-  if (!res) return
-  const { token, uid, pid } = profileStore
-  createApiGroup(token, uid, pid, groupName.value, null).then(val => {
-    if (val.code === 200) {
-      ViMessage.append('分组创建成功', 2000)
-      apiStore.loadGroupList()
-      createGroupOpen.value = false
-    } else {
-      ViMessage.append('分组创建失败，请重试！', 2000)
-    }
-  })
-}
-
 function handleCtrlS (e: KeyboardEvent) {
   // console.log(e)
   if (e.ctrlKey && e.key === 's') {
@@ -162,6 +109,15 @@ function handleCtrlS (e: KeyboardEvent) {
       }
     })
   }
+}
+
+function focusRootMenu () {
+  apiStore.gid = null
+}
+
+function focusGroupMenu (e: Event, gid: string) {
+  apiStore.gid = gid
+  e.stopPropagation()
 }
 
 onMounted(() => {
