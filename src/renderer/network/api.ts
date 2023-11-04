@@ -133,3 +133,22 @@ export function updateApi (token: string, uid: string, pid: string, aid: string,
     }
   })
 }
+
+export function updateApiTitle (token: string, uid: string, pid: string, aid: string, type: number, title: string) {
+  return getAxios<Api>({
+    method: 'post',
+    url: '/apis/update',
+    headers: {
+      token
+    },
+    data: {
+      uid,
+      pid,
+      aid,
+      type,
+      update: {
+        title
+      }
+    }
+  })
+}

@@ -10,11 +10,12 @@
           <span class="iconfont icon-daohang"></span>
         </div>
         <template v-slot:content>
-          <ul class="option-list__list">
-            <li @click="createNewProject">创建新项目</li>
+          <div class="option-list__list">
+            <!-- <li @click="createNewProject">创建新项目</li>
             <li>打开项目</li>
-            <li>设置</li>
-          </ul>
+            <li>设置</li> -->
+            <vi-cascader :options="moreOptions"></vi-cascader>
+          </div>
         </template>
       </vi-dropdown>
       <NewProjectBox v-model="showNewProject"/>
@@ -43,6 +44,21 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { ipcRenderer } from 'electron'
 import { useProfileStore } from '../store'
 const profileStore = useProfileStore()
+
+const moreOptions = [
+  {
+    label: '创建新项目',
+    value: 0
+  },
+  {
+    label: '打开项目',
+    value: 1
+  },
+  {
+    label: '设置',
+    value: 2
+  }
+]
 
 const isMaximized = ref(true)
 const showNewProject = ref(false)

@@ -11,7 +11,11 @@
     :class="[
       `neko-api-item__methods-${method ?? 'unknown'}`
     ]">{{ method ?? '未知' }}</p>
-    <p class="neko-api-item__title">{{ props.api?.title }}</p>
+    <p class="neko-api-item__title"
+    ref="contenteditableTitle"
+    :contenteditable="contenteditable">
+      {{ props.api?.title }}
+    </p>
     <vi-dropdown>
       <div class="neko-api-item__delete">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 1024 1024" version="1.1"><path d="M245.578138 574.513776c-46.517453 0-84.362386-37.844933-84.362386-84.362386 0-46.520523 37.844933-84.367503 84.362386-84.367503 46.518476 0 84.36341 37.84698 84.36341 84.367503C329.941548 536.668843 292.096614 574.513776 245.578138 574.513776zM245.578138 446.645526c-23.986297 0-43.500746 19.516496-43.500746 43.50484 0 23.986297 19.514449 43.500746 43.500746 43.500746 23.986297 0 43.50177-19.514449 43.50177-43.500746C289.079908 466.162022 269.564435 446.645526 245.578138 446.645526z"/><path d="M523.411911 574.513776c-46.517453 0-84.362386-37.844933-84.362386-84.362386 0-46.520523 37.844933-84.367503 84.362386-84.367503 46.520523 0 84.367503 37.84698 84.367503 84.367503C607.779414 536.668843 569.932434 574.513776 523.411911 574.513776zM523.411911 446.645526c-23.985274 0-43.500746 19.516496-43.500746 43.50484 0 23.986297 19.514449 43.500746 43.500746 43.500746 23.988344 0 43.505863-19.514449 43.505863-43.500746C566.917774 466.162022 547.401278 446.645526 523.411911 446.645526z"/><path d="M801.246707 574.513776c-46.517453 0-84.362386-37.844933-84.362386-84.362386 0-46.520523 37.844933-84.367503 84.362386-84.367503 46.520523 0 84.367503 37.84698 84.367503 84.367503C885.61421 536.668843 847.76723 574.513776 801.246707 574.513776zM801.246707 446.645526c-23.985274 0-43.500746 19.516496-43.500746 43.50484 0 23.986297 19.514449 43.500746 43.500746 43.500746 23.988344 0 43.505863-19.514449 43.505863-43.500746C844.75257 466.162022 825.235051 446.645526 801.246707 446.645526z"/></svg>
@@ -19,7 +23,7 @@
       <template v-slot:content>
         <ul class="neko-api-item__delete-list">
           <li>删除</li>
-          <li>重命名</li>
+          <li @click="toRename">重命名</li>
         </ul>
       </template>
     </vi-dropdown>
@@ -27,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { Method } from '../network'
 import { useApiStore } from '../store'
 import type { Api } from '../network'
@@ -35,6 +39,12 @@ const apiStore = useApiStore()
 const props = defineProps<{
   api: Api
 }>()
+
+/**
+ * 可编辑title
+ */
+const contenteditableTitle = ref()
+const contenteditable = ref(false)
 
 const method = computed(() => {
   if (!props.api) return null
@@ -60,6 +70,14 @@ const method = computed(() => {
       return null
   }
 })
+
+function toRename () {
+  contenteditable.value = true
+  setImmediate(() => {
+    console.log(contenteditableTitle.value)
+    contenteditableTitle.value.focus()
+  })
+}
 </script>
 
 <style lang="less" scoped>
