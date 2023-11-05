@@ -100,6 +100,18 @@ export const useProfileStore = defineStore('profile', () => {
   }
 
   /**
+   * 通过项目id找到项目
+   * @param pid 项目id
+   * @returns 目标项目
+   */
+  function findProjectWithPid (pid: string): {pid: string, pname: string} | null {
+    for (const proj of projectList.list) {
+      if (proj.pid === pid) return proj
+    }
+    return null
+  }
+
+  /**
    * 加载项目
    * @param newPid 新的pid 
    */
@@ -121,7 +133,7 @@ export const useProfileStore = defineStore('profile', () => {
   }
 
   /**
-   * 找到目标项目
+   * 找到目标项目(更新pid后使用)
    */
   function findTargetProject () {
     for (const proj of projectList.list) {
@@ -132,7 +144,8 @@ export const useProfileStore = defineStore('profile', () => {
       }
     }
     // 如果有那么需要改变一下加载信息
-    if (pid.value && projectList.target) isLoadedProject.value = true
+    isLoadedProject.value = pid.value && projectList.target
+    console.log('change ptarget', projectList.target)
   }
 
   /**
@@ -141,6 +154,14 @@ export const useProfileStore = defineStore('profile', () => {
    */
   function registerPid (cb: () => void) {
     pidEmitCb.push(cb)
+  }
+
+  /**
+   * 更换加载项目
+   * @param pid 项目id
+   */
+  function changeTarget (npid: string) {
+    pid.value = npid
   }
 
   // 自动登录
@@ -157,7 +178,9 @@ export const useProfileStore = defineStore('profile', () => {
     tokenLogin,
     loadProject,
     findProjectWithPname,
+    findProjectWithPid,
     updateProjectList,
-    registerPid
+    registerPid,
+    changeTarget
   }
 })

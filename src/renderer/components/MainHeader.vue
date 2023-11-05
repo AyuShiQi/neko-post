@@ -129,13 +129,10 @@ function handleOptionListPick (res: any[], step: number) {
         break
     }
   } else if (step === 1) {
-    const valuePro = res[1]
-    if (valuePro === null) {
-      shutdownOptionList()
-      return
-    }
+    const pid = res[1]
     // 寻找并打开相关项目
-    console.log(valuePro)
+    if (pid !== null) profileStore.changeTarget(pid)
+    shutdownOptionList()
   }
 }
 
