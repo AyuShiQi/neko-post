@@ -12,6 +12,7 @@ export const useApiStore = defineStore('api', () => {
   const profileStore = useProfileStore()
   // 当前选中的api id号
   const aid = ref()
+  // 是否正在更新target
   const isChangeTarget = ref(false)
   // 当前聚焦的group id号
   const gid = ref()
@@ -62,8 +63,18 @@ export const useApiStore = defineStore('api', () => {
   })
 
   // 监听pid改变
-  profileStore.registerPid(updateInfo)
-  updateInfo()
+  profileStore.registerPid(updateNewProjectApi)
+  updateNewProjectApi()
+
+  /**
+   * 更新新的项目Api列表
+   */
+  function updateNewProjectApi () {
+    aid.value = undefined
+    // 清空tabList列表
+    clearTabList()
+    updateInfo()
+  }
 
   /**
    * 更新api列表
@@ -75,6 +86,7 @@ export const useApiStore = defineStore('api', () => {
     loadBase()
     // 重新获取group
     loadGroupList()
+    // tabList改变
   }
 
   /**
@@ -228,6 +240,11 @@ export const useApiStore = defineStore('api', () => {
     return null
   }
 
+  function clearTabList () {
+    tabList.clear()
+    watingUpdateTabList.clear()
+  }
+
   /**
    * 添加待更新的列表
    * @param aid 
@@ -244,11 +261,26 @@ export const useApiStore = defineStore('api', () => {
     watingUpdateTabList.delete(aid)
   }
 
+  /**
+   * 随机返回一个待更新接口aid
+   * @returns 
+   */
   function getAWatingUpdateAid () {
     for (const aid of watingUpdateTabList.values() as any) {
       return aid
     }
     return null
+  }
+
+  /**
+   * 更新全部待更新接口
+   */
+  function updateAllWatingUpdate () {
+    for (const aid of watingUpdateTabList.values() as any) {
+      console.log(aid)
+      updateApi(aid)
+      removeWatingUpdateTab(aid)
+    }
   }
 
   return {
@@ -269,6 +301,7 @@ export const useApiStore = defineStore('api', () => {
     getTabApi,
     addWatingUpdateTab,
     removeWatingUpdateTab,
-    getAWatingUpdateAid
+    getAWatingUpdateAid,
+    updateAllWatingUpdate
   }
 })

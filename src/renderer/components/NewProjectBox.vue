@@ -27,18 +27,22 @@
         </template>
       </vi-form>
     </div>
-    <vi-dialog v-model="dialogOpen" @sure="handleDialogSure">
+    <vi-dialog v-model="dialogOpen" :toSure="handleDialogSure" @unSure="handleShutdown" @shutdown="handleShutdown">
       是否打开 {{ pname }}？
+    </vi-dialog>
+    <vi-dialog v-model="updaingDialogOpen" @sure="handleUpdateDialogSure" @unSure="handleShutdown" @shutdown="handleShutdown">
+      项目{{ pname }}有未保存内容，是否保存？
     </vi-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useProfileStore } from '../store'
+import { useProfileStore, useApiStore } from '../store'
 import { createProject } from '../network/proj'
 import { ViMessage } from 'viog-ui'
 const profileStore = useProfileStore()
+const apiStore = useApiStore()
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -56,10 +60,11 @@ const pid = ref()
  * 询问是否打开项目的对话框
  */
 const dialogOpen = ref(false)
+const updaingDialogOpen = ref(false)
 
 function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
   if (!res) return
-  console.log(res)
+  // console.log(res)
   // 查找这个项目是否存在
   const proj = profileStore.findProjectWithPname(pname.value)
   if (proj) {
@@ -105,9 +110,25 @@ function openNewProject () {
 }
 
 /**
- * 对话框确认事件
+ * 加载新新项目对话框确认事件
  */
 function handleDialogSure () {
+  // 首先确认待更新api是否全部更新
+  if (apiStore.watingUpdateTabList.size !== 0) {
+    // 询问是否有要全部更新
+    updaingDialogOpen.value = true
+    return false
+  }
+  openNewProject()
+  handleShutdown()
+  return true
+}
+
+/**
+ * 处理自动保存确认对话框
+ */
+function handleUpdateDialogSure () {
+  apiStore.updateAllWatingUpdate()
   openNewProject()
   handleShutdown()
 }
