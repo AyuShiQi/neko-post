@@ -5,7 +5,7 @@
         <img src="../assets/neko-logo.png" alt="logo">
       </div>
       <!-- 选项列表 -->
-      <HeaderOptionList/>
+      <HeaderOptionList v-if="profileStore.isLogin"/>
     </div>
     <div class="neko-main-header__center">
       {{ profileStore.isLoadedProject ? profileStore.projectList.target?.pname : '欢迎使用neko post接口管理工具' }}

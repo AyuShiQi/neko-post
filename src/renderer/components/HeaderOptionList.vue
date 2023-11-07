@@ -1,7 +1,7 @@
 <template>
   <vi-dropdown
   class="neko-option-list-dropdown"
-  v-if="profileStore.isLogin" v-model="optionListOpen">
+  v-model="optionListOpen">
     <div class="option-list">
       <span class="iconfont icon-daohang"></span>
     </div>
@@ -13,7 +13,7 @@
       class="option-list__list"></vi-cascader>
     </template>
   </vi-dropdown>
-  <NewProjectBox v-model="showNewProject"/>
+  <NewProjectBox v-model="showNewProject" v-if="showNewProject"/>
   <vi-dialog v-model="updaingDialogOpen" @sure="handleUpdateWatingApi" @unSure="shutdownOptionList">
     项目 {{ profileStore.projectList.target?.pname }} 有未保存内容，是否保存？
   </vi-dialog>
@@ -63,7 +63,7 @@ const updaingDialogOpen = ref(false)
 /**
  * 待打开的pid
  */
- const watingOpenPid = ref()
+const watingOpenPid = ref()
 
 /**
  * 级联选择事件

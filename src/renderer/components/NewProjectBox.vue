@@ -1,5 +1,5 @@
 <template>
-  <div class="neko-new-project-box" v-if="props.modelValue">
+  <div class="neko-new-project-box">
     <div class="box-content">
       <vi-form class="neko-new-project-box__form" @submit="handleSubmit">
         <template v-slot="{ submit }">
@@ -27,11 +27,11 @@
         </template>
       </vi-form>
     </div>
-    <vi-dialog v-model="dialogOpen" :toSure="handleDialogSure" @unSure="handleShutdown" @shutdown="handleShutdown">
+    <vi-dialog v-model="dialogOpen" :toSure="handleDialogSure" @unSure="handleShutdown" @shutDown="handleShutdown">
       是否打开 {{ pname }}？
     </vi-dialog>
-    <vi-dialog v-model="updaingDialogOpen" @sure="handleUpdateDialogSure" @unSure="handleShutdown" @shutdown="handleShutdown">
-      项目{{ pname }}有未保存内容，是否保存？
+    <vi-dialog v-model="updaingDialogOpen" @sure="handleUpdateDialogSure" @unSure="handleShutdown" @shutDown="handleShutdown">
+      项目{{ profileStore.projectList.target?.pname }}有未保存内容，是否保存？
     </vi-dialog>
   </div>
 </template>
@@ -81,10 +81,12 @@ function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
         pid.value = val.data.pid
         // 检测是否已经有了打开项目
         if (profileStore.isLoadedProject) {
+          console.log('进入打开项目对话框')
           // 打开对话框
           dialogOpen.value = true
         // 否则直接打开新项目
         } else {
+          console.log('直接关闭进入项目对话框')
           handleShutdown()
           openNewProject()
         }
@@ -113,8 +115,10 @@ function openNewProject () {
  * 加载新新项目对话框确认事件
  */
 function handleDialogSure () {
+  console.log('进入toSure')
   // 首先确认待更新api是否全部更新
   if (apiStore.watingUpdateTabList.size !== 0) {
+    console.log('进入打开确认保存对话框', apiStore.watingUpdateTabList.size)
     // 询问是否有要全部更新
     updaingDialogOpen.value = true
     return false

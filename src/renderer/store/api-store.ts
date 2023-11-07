@@ -14,7 +14,7 @@ export const useApiStore = defineStore('api', () => {
   const aid = ref()
   // 是否正在更新target
   const isChangeTarget = ref(false)
-  // 当前聚焦的group id号
+  // 当前聚焦的group id号(目前暂时还没有什么用)
   const gid = ref()
   const apiList = reactive({
     list: [] as Api[],
@@ -70,6 +70,8 @@ export const useApiStore = defineStore('api', () => {
    * 更新新的项目Api列表
    */
   function updateNewProjectApi () {
+    console.log('通过pid或者加载project状态进入清空tablist')
+    // tabList改变
     aid.value = undefined
     // 清空tabList列表
     clearTabList()
@@ -85,8 +87,7 @@ export const useApiStore = defineStore('api', () => {
     // 重新获取base
     loadBase()
     // 重新获取group
-    loadGroupList()
-    // tabList改变
+    loadGroupList()    
   }
 
   /**
@@ -191,16 +192,9 @@ export const useApiStore = defineStore('api', () => {
    */
   function updateApi (api: string | Api) {
     let target: Api
-    if (typeof api === 'string') {
-      // 寻找
-      const aid = api
-      for (const api of apiList.list) {
-        if (api.aid === aid) {
-          target = api
-          break
-        }
-      }
-    } else target = api
+    if (typeof api === 'string') target = findApiWithAid(api)
+    else target = api
+    console.log('update api', target)
     if (!target) return Promise.resolve({ code: 500, msg: '', data: null })
     return updateApiInterface(profileStore.token, profileStore.uid, profileStore.pid, target.aid, target.type, {
       gid: target.gid,
@@ -277,10 +271,22 @@ export const useApiStore = defineStore('api', () => {
    */
   function updateAllWatingUpdate () {
     for (const aid of watingUpdateTabList.values() as any) {
-      console.log(aid)
       updateApi(aid)
       removeWatingUpdateTab(aid)
     }
+  }
+
+  /**
+   * 通过aid找到对应的接口信息（包括基础配置，但不包括组）
+   * @param aid 
+   */
+  function findApiWithAid (aid: string) {
+    // 基础配置匹配
+    if (apiList.base.aid === aid) return apiList.base
+    for (const api of apiList.list) {
+      if (api.aid === aid) return api
+    }
+    return null
   }
 
   return {

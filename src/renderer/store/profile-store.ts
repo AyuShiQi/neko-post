@@ -67,6 +67,18 @@ export const useProfileStore = defineStore('profile', () => {
   }, { immediate: true })
 
   /**
+   * 当项目刚加载时，同样需要触发pid的回调函数
+   */
+  watch(isLoadedProject, () => {
+    console.log('进入isLoadedProject watch函数', isLoadedProject.value)
+    if (!isLoadedProject.value) return
+    // 触发回调函数
+    for (const cb of pidEmitCb) {
+      cb()
+    }
+  })
+
+  /**
    * token登录
    * @param newToken 新的token，可以选择传入 
    */
@@ -144,8 +156,8 @@ export const useProfileStore = defineStore('profile', () => {
       }
     }
     // 如果有那么需要改变一下加载信息
-    isLoadedProject.value = pid.value && projectList.target
-    console.log('change ptarget', projectList.target)
+    isLoadedProject.value = pid.value && projectList.target ? true : false
+    console.log('change ptarget', projectList.target, isLoadedProject.value)
   }
 
   /**
