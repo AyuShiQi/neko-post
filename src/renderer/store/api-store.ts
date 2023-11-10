@@ -1,10 +1,8 @@
 import { reactive, ref, watch, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { getApiList as getApiListInterface, getBase, getGroupList, updateApi as updateApiInterface, delApi as da, delApiGroup as dg} from '../network/api'
-import type { Api, Result } from '../network'
-
+import type { Api } from '../network'
 import { useProfileStore } from './profile-store'
-
 /**
  * api接口信息
  */
@@ -148,30 +146,23 @@ export const useApiStore = defineStore('api', () => {
   /**
    * 加载groupList
    */
-  function loadGroupList () {
+  async function loadGroupList () {
     const { token, pid, uid } = profileStore
-    return new Promise<Result>((res) => {
-      getGroupList(token, uid, pid).then(val => {
-        if (val.code === 200) {
-          apiList.group = val.data
-        }
-        res(val)
-      })
-    })
+    const val = await getGroupList(token, uid, pid)
+    if (val.code === 200) {
+      apiList.group = val.data
+    }
+    return val
   }
 
   /**
    * 加载基础配置
    */
-  function loadBase () {
+  async function loadBase () {
     const { token, pid, uid } = profileStore
-    return new Promise<Result>((res) => {
-      getBase(token, uid, pid).then(val => {
-        // console.log('load base', val.data)
-        if (val.code === 200) apiList.base = val.data
-        res(val)
-      })
-    })
+    const val = await getBase(token, uid, pid)
+    if (val.code === 200) apiList.base = val.data
+    return val
   }
 
   /**
@@ -192,7 +183,7 @@ export const useApiStore = defineStore('api', () => {
     let target: Api
     if (typeof api === 'string') target = findApiWithAid(api)
     else target = api
-    console.log('update api', target)
+    // console.log('update api', target)
     if (!target) return Promise.resolve({ code: 500, msg: '', data: null })
     return updateApiInterface(profileStore.token, profileStore.uid, profileStore.pid, target.aid, target.type, {
       gid: target.gid,
@@ -308,6 +299,11 @@ export const useApiStore = defineStore('api', () => {
     return null
   }
 
+  /**
+   * 删除接口
+   * @param daid 接口id 
+   * @returns
+   */
   async function delApi (daid: string) {
     const val = await da(profileStore.token, profileStore.uid, profileStore.pid, daid)
     if (val.code === 200) {
@@ -319,6 +315,11 @@ export const useApiStore = defineStore('api', () => {
     return val
   }
 
+  /**
+   * 删除组
+   * @param gaid 组的aid 
+   * @returns
+   */
   async function delApiGroup (gaid: string) {
     const val = await dg(profileStore.token, profileStore.uid, profileStore.pid, gaid)
     if (val.code === 200) {

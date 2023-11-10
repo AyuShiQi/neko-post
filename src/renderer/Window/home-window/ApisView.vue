@@ -104,16 +104,15 @@ function openCreateGroup () {
  * ctrl + s自动保存接口
  * @param e 
  */
-function handleCtrlS (e: KeyboardEvent) {
+async function handleCtrlS (e: KeyboardEvent) {
   // console.log(e)
   if (e.ctrlKey && e.key === 's') {
     if (!apiStore.watingUpdateTabList.has(apiStore.aid)) return
     // 自动更新target
-    apiStore.updateApi(apiStore.apiList.target).then(val => {
-      if (val.code === 200) {
-        apiStore.removeWatingUpdateTab(apiStore.aid)
-      }
-    })
+    const val = await apiStore.updateApi(apiStore.apiList.target)
+    if (val.code === 200) {
+      apiStore.removeWatingUpdateTab(apiStore.aid)
+    }
   }
 }
 

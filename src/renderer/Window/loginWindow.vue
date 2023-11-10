@@ -128,20 +128,19 @@ function changeMethod () {
  * @param fromMap 结果集
  * @param res 结果
  */
-function handleLoginSubmit (fromMap: Map<string, string>, res: boolean) {
+async function handleLoginSubmit (fromMap: Map<string, string>, res: boolean) {
   // if (res) profileStore.isLogin = true
   if (!res) return
-  login(username.value, password.value).then(val => {
-    if (val.code === 200) {
-      ViMessage.append('登陆成功')
-      profileStore.toLoginChangeInfo(val.data.token, val.data.uid, val.data.username)
-      updateUserInfo({
-        username: username.value,
-        password: password.value,
-        token: val.data.token
-      })
-    }
-  })
+  const val = await login(username.value, password.value)
+  if (val.code === 200) {
+    ViMessage.append('登陆成功')
+    profileStore.toLoginChangeInfo(val.data.token, val.data.uid, val.data.username)
+    updateUserInfo({
+      username: username.value,
+      password: password.value,
+      token: val.data.token
+    })
+  }
 }
 
 /**
@@ -150,19 +149,18 @@ function handleLoginSubmit (fromMap: Map<string, string>, res: boolean) {
  * @param res 结果
  * @param param2 操作
  */
-function handleRegisterSubmit (fromMap: Map<string, string>, res: boolean, { getSubmitFeedback }) {
+async function handleRegisterSubmit (fromMap: Map<string, string>, res: boolean, { getSubmitFeedback }) {
   if (!res) return
   // if (res) profileStore.isLogin = true
-  createNewUser(registerUsername.value, registerPassword.value).then(val => {
-    if (val.code === 200) {
-      tempRegisterToken.value = val.data.token
-      dialogView.value = true
-    } else if (val.code === 500) {
-      const feedBackMap = new Map<string, string>()
-      feedBackMap.set('username', val.msg)
-      getSubmitFeedback(feedBackMap)
-    }
-  })
+  const val = await createNewUser(registerUsername.value, registerPassword.value)
+  if (val.code === 200) {
+    tempRegisterToken.value = val.data.token
+    dialogView.value = true
+  } else if (val.code === 500) {
+    const feedBackMap = new Map<string, string>()
+    feedBackMap.set('username', val.msg)
+    getSubmitFeedback(feedBackMap)
+  }
 }
 
 /**

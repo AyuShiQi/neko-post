@@ -82,20 +82,19 @@ export const useProfileStore = defineStore('profile', () => {
    * token登录
    * @param newToken 新的token，可以选择传入 
    */
-  function tokenLogin (newToken?: string) {
+  async function tokenLogin (newToken?: string) {
     if (newToken) token.value = newToken
     if (token.value) {
-      verifyToken(token.value).then(val => {
-        if (val.code === 200) {
-          isLogin.value = true
-          uid.value = val.data.uid
-          username.value = val.data.username
-          // 去加载项目列表 和 上一次打开项目
-          updateProjectList()
-        } else {
-          isLogin.value = false
-        }
-      })
+      const val = await verifyToken(token.value)
+      if (val.code === 200) {
+        isLogin.value = true
+        uid.value = val.data.uid
+        username.value = val.data.username
+        // 去加载项目列表 和 上一次打开项目
+        updateProjectList()
+      } else {
+        isLogin.value = false
+      }
     }
   }
 

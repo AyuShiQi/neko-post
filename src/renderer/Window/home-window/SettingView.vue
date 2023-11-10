@@ -54,29 +54,27 @@ function handleTitleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
   } else openTitleDialog.value = true
 }
 
-function handleTitleSure () {
+async function handleTitleSure () {
   const { token, uid, pid } = profileStore
-  updateProjectTitle(token, uid, pid, pname.value).then(val => {
-    if (val.code === 200) {
-      profileStore.updateProjectList()
-      ViMessage.append('更新成功', 2000)
-    } else {
-      ViMessage.append('更新失败', 2000)
-    }
-  })
+  const val = await updateProjectTitle(token, uid, pid, pname.value)
+  if (val.code === 200) {
+    profileStore.updateProjectList()
+    ViMessage.append('更新成功', 2000)
+  } else {
+    ViMessage.append('更新失败', 2000)
+  }
 }
 
-function handleDeleteSure () {
+async function handleDeleteSure () {
   const { token, uid, pid } = profileStore
-  deleteProject(token, uid, pid).then(val => {
-    if (val.code === 200) {
-      profileStore.updateProjectList()
-      profileStore.pid = undefined
-      ViMessage.append('删除成功', 2000)
-    } else {
-      ViMessage.append('删除失败', 2000)
-    }
-  })
+  const val = await deleteProject(token, uid, pid)
+  if (val.code === 200) {
+    profileStore.updateProjectList()
+    profileStore.pid = undefined
+    ViMessage.append('删除成功', 2000)
+  } else {
+    ViMessage.append('删除失败', 2000)
+  }
 }
 </script>
 
