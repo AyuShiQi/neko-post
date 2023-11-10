@@ -134,7 +134,7 @@ function handleLoginSubmit (fromMap: Map<string, string>, res: boolean) {
   login(username.value, password.value).then(val => {
     if (val.code === 200) {
       ViMessage.append('登陆成功')
-      profileStore.isLogin = true
+      profileStore.toLoginChangeInfo(val.data.token, val.data.uid, val.data.username)
       updateUserInfo({
         username: username.value,
         password: password.value,

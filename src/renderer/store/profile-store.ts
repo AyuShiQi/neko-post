@@ -70,7 +70,7 @@ export const useProfileStore = defineStore('profile', () => {
    * 当项目刚加载时，同样需要触发pid的回调函数
    */
   watch(isLoadedProject, () => {
-    console.log('进入isLoadedProject watch函数', isLoadedProject.value)
+    // console.log('进入isLoadedProject watch函数', isLoadedProject.value)
     if (!isLoadedProject.value) return
     // 触发回调函数
     for (const cb of pidEmitCb) {
@@ -176,6 +176,15 @@ export const useProfileStore = defineStore('profile', () => {
     pid.value = npid
   }
 
+  function toLoginChangeInfo (ntoken: string, nuid: string, nusername: string) {
+    isLogin.value = true
+    token.value = ntoken
+    uid.value = nuid
+    username.value = nusername
+    // 去加载项目列表 和 上一次打开项目
+    updateProjectList()
+  }
+
   // 自动登录
   tokenLogin(localInfo.token)
 
@@ -193,6 +202,7 @@ export const useProfileStore = defineStore('profile', () => {
     findProjectWithPid,
     updateProjectList,
     registerPid,
-    changeTarget
+    changeTarget,
+    toLoginChangeInfo
   }
 })

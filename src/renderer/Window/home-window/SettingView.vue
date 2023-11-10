@@ -27,17 +27,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useProfileStore } from '@/renderer/store'
 import { updateProjectTitle, deleteProject } from '@/renderer/network/proj'
 import { ViMessage } from 'viog-ui'
 const profileStore = useProfileStore()
 
 // 待修改的
-const pname = ref()
+const pname = ref(profileStore.projectList.target.pname)
 const openTitleDialog = ref(false)
 const deleteDialog = ref(false)
+const originPname = computed(() => profileStore.projectList.target.pname)
 const noModified = computed(() => pname.value === profileStore.projectList.target.pname)
+
+watch(originPname, () => {
+  pname.value = originPname.value
+})
 
 function handleTitleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
   if (!res || noModified.value) return
@@ -73,10 +78,6 @@ function handleDeleteSure () {
     }
   })
 }
-
-onMounted(() => {
-  pname.value = profileStore.projectList.target.pname
-})
 </script>
 
 <style lang="less" scoped>
