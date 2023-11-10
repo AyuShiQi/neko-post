@@ -32,18 +32,17 @@ const apiStore = useApiStore()
 const apiName = ref()
 const apiGroup = ref()
 
-function handleCreateApi (res: boolean, getSubmitFeedback: (m: Map<string, string>) => void) {
+async function handleCreateApi (res: boolean, getSubmitFeedback: (m: Map<string, string>) => void) {
   if (!res) return
   const { token, uid, pid } = profileStore
-  createApi(token, uid, pid, apiName.value, apiGroup.value === 'none' ? null : apiGroup.value).then(val => {
-    if (val.code === 200) {
-      ViMessage.append('接口创建成功', 2000)
-      apiStore.loadApiList()
-      emit('update:modelValue', false)
-    } else {
-      ViMessage.append('接口创建失败，请重试！', 2000)
-    }
-  })
+  const val = await createApi(token, uid, pid, apiName.value, apiGroup.value === 'none' ? null : apiGroup.value)
+  if (val.code === 200) {
+    ViMessage.append('接口创建成功', 2000)
+    apiStore.loadApiList()
+    emit('update:modelValue', false)
+  } else {
+    ViMessage.append('接口创建失败，请重试！', 2000)
+  }
 }
 
 function handleBoxUpdate (val: boolean) {

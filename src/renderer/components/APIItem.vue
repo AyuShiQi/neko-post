@@ -87,33 +87,31 @@ function toRename () {
   })
 }
 
-function saveApiTitle () {
+async function saveApiTitle () {
   const newTitle = contenteditableTitle.value.innerText
   if (newTitle === '') return ViMessage.append('修改失败!', 2000)
   contenteditable.value = false
-  apiStore.updateApiTitle(props.api, newTitle).then(val => {
-    if (val.code === 200) {
-      ViMessage.append('修改成功', 2000)
-      props.api.title = newTitle
-    } else if (val.code === 500) {
-      contenteditableTitle.value.innerText = props.api.title
-      ViMessage.append('修改失败!', 2000)
-    }
-  })
+  const val = await apiStore.updateApiTitle(props.api, newTitle)
+  if (val.code === 200) {
+    ViMessage.append('修改成功', 2000)
+    props.api.title = newTitle
+  } else if (val.code === 500) {
+    contenteditableTitle.value.innerText = props.api.title
+    ViMessage.append('修改失败!', 2000)
+  }
 }
 
 function toDelete () {
   deleteDialogOpen.value = true
 }
 
-function deleteApi () {
-  apiStore.delApi(props.api.aid).then(val => {
-    if (val.code === 200) {
-      ViMessage.append('删除成功', 2000)
-    } else {
-      ViMessage.append('删除失败', 2000)
-    }
-  })
+async function deleteApi () {
+  const val = await apiStore.delApi(props.api.aid)
+  if (val.code === 200) {
+    ViMessage.append('删除成功', 2000)
+  } else {
+    ViMessage.append('删除失败', 2000)
+  }
 }
 </script>
 

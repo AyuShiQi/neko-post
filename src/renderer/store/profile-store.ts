@@ -135,12 +135,12 @@ export const useProfileStore = defineStore('profile', () => {
   /**
    * 更新项目列表
    */
-  function updateProjectList () {
-    getProjectList(token.value, uid.value).then(val => {
-      projectList.list = val.data
-      // 修改target
-      findTargetProject()
-    })
+  async function updateProjectList () {
+    const val = await getProjectList(token.value, uid.value)
+    projectList.list = val.data
+    // 修改target
+    findTargetProject()
+    return val
   }
 
   /**

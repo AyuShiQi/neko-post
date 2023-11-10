@@ -62,7 +62,7 @@ const pid = ref()
 const dialogOpen = ref(false)
 const updaingDialogOpen = ref(false)
 
-function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
+async function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
   if (!res) return
   // console.log(res)
   // 查找这个项目是否存在
@@ -73,27 +73,26 @@ function handleSubmit (resMap: any, res: boolean, { getSubmitFeedback }) {
     getSubmitFeedback(resMap)
   } else {
     // 创建
-    createProject(profileStore.token, profileStore.uid, pname.value).then(val => {
-      // 更新列表
-      profileStore.updateProjectList()
-      if (val.code === 200) {
-        ViMessage.append('创建成功', 2000)
-        pid.value = val.data.pid
-        // 检测是否已经有了打开项目
-        if (profileStore.isLoadedProject) {
-          console.log('进入打开项目对话框')
-          // 打开对话框
-          dialogOpen.value = true
-        // 否则直接打开新项目
-        } else {
-          console.log('直接关闭进入项目对话框')
-          handleShutdown()
-          openNewProject()
-        }
+    const val = await createProject(profileStore.token, profileStore.uid, pname.value)
+    // 更新列表
+    profileStore.updateProjectList()
+    if (val.code === 200) {
+      ViMessage.append('创建成功', 2000)
+      pid.value = val.data.pid
+      // 检测是否已经有了打开项目
+      if (profileStore.isLoadedProject) {
+        console.log('进入打开项目对话框')
+        // 打开对话框
+        dialogOpen.value = true
+      // 否则直接打开新项目
       } else {
-        ViMessage.append('创建失败，请重试！', 2000)
+        console.log('直接关闭进入项目对话框')
+        handleShutdown()
+        openNewProject()
       }
-    })
+    } else {
+      ViMessage.append('创建失败，请重试！', 2000)
+    }
   }
 }
 

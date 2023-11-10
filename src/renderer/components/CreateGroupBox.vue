@@ -25,18 +25,17 @@ const apiStore = useApiStore()
 
 const groupName = ref()
 
-function handleCreateGroup (res: boolean, getSubmitFeedback: (m: Map<string, string>) => void) {
+async function handleCreateGroup (res: boolean, getSubmitFeedback: (m: Map<string, string>) => void) {
   if (!res) return
   const { token, uid, pid } = profileStore
-  createApiGroup(token, uid, pid, groupName.value, null).then(val => {
-    if (val.code === 200) {
-      ViMessage.append('分组创建成功', 2000)
-      apiStore.loadGroupList()
-      emit('update:modelValue', false)
-    } else {
-      ViMessage.append('分组创建失败，请重试！', 2000)
-    }
-  })
+  const val = await createApiGroup(token, uid, pid, groupName.value, null)
+  if (val.code === 200) {
+    ViMessage.append('分组创建成功', 2000)
+    apiStore.loadGroupList()
+    emit('update:modelValue', false)
+  } else {
+    ViMessage.append('分组创建失败，请重试！', 2000)
+  }
 }
 
 function handleBoxUpdate (val: boolean) {
