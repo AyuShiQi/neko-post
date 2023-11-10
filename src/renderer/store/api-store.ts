@@ -1,6 +1,6 @@
 import { reactive, ref, watch, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { getApiList as getApiListInterface, getBase, getGroupList, updateApi as updateApiInterface} from '../network/api'
+import { getApiList as getApiListInterface, getBase, getGroupList, updateApi as updateApiInterface, delApi as da, delApiGroup as dg} from '../network/api'
 import type { Api, Result } from '../network'
 
 import { useProfileStore } from './profile-store'
@@ -210,6 +210,23 @@ export const useApiStore = defineStore('api', () => {
   }
 
   /**
+   * 更新接口信息
+   * @param api api对象
+   * @returns
+   */
+  function updateApiTitle (api: string | Api, title: string) {
+    let target: Api
+    if (typeof api === 'string') target = findApiWithAid(api)
+    else target = api
+    // console.log('update api', target)
+    if (!target) return Promise.resolve({ code: 500, msg: '', data: null })
+    if (target.title === title) return Promise.resolve({ code: 201, msg: '没有更改', data: null })
+    return updateApiInterface(profileStore.token, profileStore.uid, profileStore.pid, target.aid, target.type, {
+      title
+    })
+  }
+
+  /**
    * 更新tabList中update后的信息
    */
   function updateTab () {
@@ -227,6 +244,10 @@ export const useApiStore = defineStore('api', () => {
     tabList.delete(aid)
   }
 
+  /**
+   * 随机返回一个tab Api
+   * @returns
+   */
   function getTabApi () {
     for (const aid of tabList.keys() as any) {
       return aid
@@ -289,6 +310,21 @@ export const useApiStore = defineStore('api', () => {
     return null
   }
 
+  async function delApi (daid: string) {
+    const val = await da(profileStore.token, profileStore.uid, profileStore.pid, daid)
+    if (val.code === 200) {
+      removeTab(daid)
+      if (aid.value === daid) aid.value = getTabApi()
+      removeWatingUpdateTab(daid)      
+      loadApiList()
+    }
+    return val
+  }
+
+  function delApiGroup (aid: string) {
+    return dg(profileStore.token, profileStore.uid, profileStore.pid, aid)
+  }
+
   return {
     aid,
     gid,
@@ -308,6 +344,9 @@ export const useApiStore = defineStore('api', () => {
     addWatingUpdateTab,
     removeWatingUpdateTab,
     getAWatingUpdateAid,
-    updateAllWatingUpdate
+    updateAllWatingUpdate,
+    updateApiTitle,
+    delApi,
+    delApiGroup
   }
 })

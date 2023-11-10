@@ -152,3 +152,50 @@ export function updateApiTitle (token: string, uid: string, pid: string, aid: st
     }
   })
 }
+
+/**
+ * 删除接口
+ * @param token
+ * @param uid
+ * @param pid
+ * @param aid
+ * @returns
+ */
+export function delApi (token: string, uid: string, pid: string, aid: string) {
+  return getAxios<Api>({
+    method: 'post',
+    url: '/apis/delete',
+    headers: {
+      token
+    },
+    data: {
+      uid,
+      pid,
+      aid,
+    }
+  })
+}
+
+/**
+ * 删除项目组
+ * @param token
+ * @param uid
+ * @param pid
+ * @param aid
+ * @returns
+ */
+export function delApiGroup (token: string, uid: string, pid: string, aid: string) {
+  return getAxios<Api>({
+    method: 'post',
+    url: '/apis/delete',
+    headers: {
+      token
+    },
+    data: {
+      uid,
+      pid,
+      aid,
+    }
+  })
+}
+

@@ -3,7 +3,8 @@
   :class="[
     {
       'neko-api-item-wating-update': apiStore.isWatingUpdate(props.api?.aid),
-      'neko-api-item-focus': apiStore.aid === props.api?.aid
+      'neko-api-item-focus': apiStore.aid === props.api?.aid,
+      'neko-api-item_contenteditable-focus': contenteditable
     }
   ]">
     <p
@@ -13,20 +14,24 @@
     ]">{{ method ?? '未知' }}</p>
     <p class="neko-api-item__title"
     ref="contenteditableTitle"
+    @blur="saveApiTitle"
     :contenteditable="contenteditable">
       {{ props.api?.title }}
     </p>
-    <vi-dropdown>
+    <vi-dropdown v-model="optionListOpen">
       <div class="neko-api-item__delete">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 1024 1024" version="1.1"><path d="M245.578138 574.513776c-46.517453 0-84.362386-37.844933-84.362386-84.362386 0-46.520523 37.844933-84.367503 84.362386-84.367503 46.518476 0 84.36341 37.84698 84.36341 84.367503C329.941548 536.668843 292.096614 574.513776 245.578138 574.513776zM245.578138 446.645526c-23.986297 0-43.500746 19.516496-43.500746 43.50484 0 23.986297 19.514449 43.500746 43.500746 43.500746 23.986297 0 43.50177-19.514449 43.50177-43.500746C289.079908 466.162022 269.564435 446.645526 245.578138 446.645526z"/><path d="M523.411911 574.513776c-46.517453 0-84.362386-37.844933-84.362386-84.362386 0-46.520523 37.844933-84.367503 84.362386-84.367503 46.520523 0 84.367503 37.84698 84.367503 84.367503C607.779414 536.668843 569.932434 574.513776 523.411911 574.513776zM523.411911 446.645526c-23.985274 0-43.500746 19.516496-43.500746 43.50484 0 23.986297 19.514449 43.500746 43.500746 43.500746 23.988344 0 43.505863-19.514449 43.505863-43.500746C566.917774 466.162022 547.401278 446.645526 523.411911 446.645526z"/><path d="M801.246707 574.513776c-46.517453 0-84.362386-37.844933-84.362386-84.362386 0-46.520523 37.844933-84.367503 84.362386-84.367503 46.520523 0 84.367503 37.84698 84.367503 84.367503C885.61421 536.668843 847.76723 574.513776 801.246707 574.513776zM801.246707 446.645526c-23.985274 0-43.500746 19.516496-43.500746 43.50484 0 23.986297 19.514449 43.500746 43.500746 43.500746 23.988344 0 43.505863-19.514449 43.505863-43.500746C844.75257 466.162022 825.235051 446.645526 801.246707 446.645526z"/></svg>
       </div>
       <template v-slot:content>
         <ul class="neko-api-item__delete-list">
-          <li>删除</li>
+          <li @click="toDelete">删除</li>
           <li @click="toRename">重命名</li>
         </ul>
       </template>
     </vi-dropdown>
+    <vi-dialog v-model="deleteDialogOpen" @sure="deleteApi">
+      你确定要删除接口 {{ props.api.title }} 吗？
+    </vi-dialog>
   </div>
 </template>
 
@@ -35,6 +40,7 @@ import { ref, computed } from 'vue'
 import { Method } from '../network'
 import { useApiStore } from '../store'
 import type { Api } from '../network'
+import { ViMessage } from 'viog-ui'
 const apiStore = useApiStore()
 const props = defineProps<{
   api: Api
@@ -45,6 +51,8 @@ const props = defineProps<{
  */
 const contenteditableTitle = ref()
 const contenteditable = ref(false)
+const optionListOpen = ref(false)
+const deleteDialogOpen = ref(false)
 
 const method = computed(() => {
   if (!props.api) return null
@@ -73,9 +81,37 @@ const method = computed(() => {
 
 function toRename () {
   contenteditable.value = true
+  optionListOpen.value = false
   setImmediate(() => {
-    console.log(contenteditableTitle.value)
     contenteditableTitle.value.focus()
+  })
+}
+
+function saveApiTitle () {
+  const newTitle = contenteditableTitle.value.innerText
+  contenteditable.value = false
+  apiStore.updateApiTitle(props.api, newTitle).then(val => {
+    if (val.code === 200) {
+      ViMessage.append('修改成功', 2000)
+      props.api.title = newTitle
+    } else if (val.code === 500) {
+      contenteditableTitle.value.innerText = props.api.title
+      ViMessage.append('修改失败!', 2000)
+    }
+  })
+}
+
+function toDelete () {
+  deleteDialogOpen.value = true
+}
+
+function deleteApi () {
+  apiStore.delApi(props.api.aid).then(val => {
+    if (val.code === 200) {
+      ViMessage.append('删除成功', 2000)
+    } else {
+      ViMessage.append('删除失败', 2000)
+    }
   })
 }
 </script>
@@ -154,6 +190,7 @@ function toRename () {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    outline: none;
   }
 
   .neko-api-item__delete {
@@ -206,6 +243,18 @@ function toRename () {
 .neko-api-item-wating-update {
   .neko-api-item__title {
     color: var(--neko-warning-bg-color);
+  }
+}
+
+.neko-api-item_contenteditable-focus {
+  box-shadow: inset 0 0 0 1px var(--vi-purple-color6),
+  inset 0 0 10px 0 var(--vi-purple-color6);
+  background-color: var(--neko-white-bg-color);
+
+  &:hover {
+    box-shadow: inset 0 0 0 1px var(--vi-purple-color6),
+    inset 0 0 10px 0 var(--vi-purple-color6);
+    background-color: var(--neko-white-bg-color);
   }
 }
 </style>
