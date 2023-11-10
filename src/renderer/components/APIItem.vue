@@ -29,7 +29,7 @@
         </ul>
       </template>
     </vi-dropdown>
-    <vi-dialog v-model="deleteDialogOpen" @sure="deleteApi">
+    <vi-dialog v-model="deleteDialogOpen" @sure="deleteApi" title="确认提醒" blur>
       你确定要删除接口 {{ props.api.title }} 吗？
     </vi-dialog>
   </div>
@@ -89,6 +89,7 @@ function toRename () {
 
 function saveApiTitle () {
   const newTitle = contenteditableTitle.value.innerText
+  if (newTitle === '') return ViMessage.append('修改失败!', 2000)
   contenteditable.value = false
   apiStore.updateApiTitle(props.api, newTitle).then(val => {
     if (val.code === 200) {

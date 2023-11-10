@@ -93,21 +93,19 @@ export const useApiStore = defineStore('api', () => {
   /**
    * 加载apiList
    */
-  function loadApiList () {
+  async function loadApiList () {
     // profileStore.pid
     const { token, isLoadedProject, pid, uid } = profileStore
-    return new Promise<Result>((res) => {
-      if (isLoadedProject) getApiListInterface(token, uid, pid).then(val => {
-        if (val.code === 200) {
-          apiList.list = val.data
-          loadTargetApi()
-          // 更换updateTab
-          updateTab()
-        }
-        res(val)
-      })
-      else res({ code: 500, msg: '无加载项目', data: null})
-    })
+    if (isLoadedProject) {
+      const val = await getApiListInterface(token, uid, pid)
+      if (val.code === 200) {
+        apiList.list = val.data
+        loadTargetApi()
+        // 更换updateTab
+        updateTab()
+      }
+      return val
+    } else return { code: 500, msg: '无加载项目', data: null}
   }
 
   /**
@@ -321,8 +319,19 @@ export const useApiStore = defineStore('api', () => {
     return val
   }
 
-  function delApiGroup (aid: string) {
-    return dg(profileStore.token, profileStore.uid, profileStore.pid, aid)
+  async function delApiGroup (gaid: string) {
+    const val = await dg(profileStore.token, profileStore.uid, profileStore.pid, gaid)
+    if (val.code === 200) {
+      const apis = groupApi.value(gaid)
+      for (const api of apis) {
+        removeTab(api.aid)
+        if (aid.value === api.aid) aid.value = getTabApi()
+        removeWatingUpdateTab(gaid)    
+      }
+      await loadApiList()
+      await loadGroupList()
+    }
+    return val
   }
 
   return {

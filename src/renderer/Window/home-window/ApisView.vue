@@ -53,6 +53,7 @@
           v-for="group of apiStore.apiList.group"
           :key="group.title"
           :title="group.title"
+          :group="group"
           @click="focusGroupMenu($event, group.aid)">
             <APIItem
             v-for="api of apiStore.groupApi(group.aid)"

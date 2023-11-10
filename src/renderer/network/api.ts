@@ -187,7 +187,7 @@ export function delApi (token: string, uid: string, pid: string, aid: string) {
 export function delApiGroup (token: string, uid: string, pid: string, aid: string) {
   return getAxios<Api>({
     method: 'post',
-    url: '/apis/delete',
+    url: '/apis/deleteGroup',
     headers: {
       token
     },
