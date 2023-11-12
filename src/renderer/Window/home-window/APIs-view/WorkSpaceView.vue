@@ -20,7 +20,7 @@
         {{ item.title }}
       </vi-tab-card>
     </vi-tab-card-group>
-    <vi-scroll class="workspace-content" v-if="apiStore.aid">
+    <div class="workspace-content" v-if="apiStore.aid">
       <!-- 发送部分 -->
       <div class="workspace-content__send">
         <vi-input
@@ -55,10 +55,10 @@
             </vi-select>
           </template>
         </vi-input>
-        <vi-button class="workspace-content__send-btn" color="purple">Send</vi-button>
+        <vi-button class="workspace-content__send-btn" color="purple" @click="sendRequest">Send</vi-button>
       </div>
       <!-- 请求部分 -->
-      <div class="workspace-content__request">
+      <div class="workspace-content__request vi-scroll-bar">
         <vi-nav @change="handleNavChange">
           <vi-nav-item>Params</vi-nav-item>
           <vi-nav-item>Authorization</vi-nav-item>
@@ -72,7 +72,14 @@
           <BodyContent v-else></BodyContent>
         </div>
       </div>
-    </vi-scroll>
+      <!-- 响应内容部分 -->
+      <vi-flex class="workspace-content__response" horizontal="top" vertical="none">
+        <div class="workspace-content__response__title">Response</div>
+        <div class="workspace-content__response__content">
+          {{ responseView }}
+        </div>
+      </vi-flex>
+    </div>
     <div class="workspace-content-temp" v-else>
       暂无打开接口
     </div>
@@ -97,12 +104,14 @@
   import BodyContent from './BodyContent.vue'
   import { ref } from 'vue'
   import { useApiStore } from '@/renderer/store'
+  import { Method, getAxios } from '@/renderer/network'
   import { ViMessage } from 'viog-ui'
   const apiStore = useApiStore()
 
   let deleteAid: string
   const navChoose = ref(0)
   const saveDialog = ref(false)
+  const responseView = ref()
 
   function handleNavChange (id: 0) {
     // console.log(id)
@@ -145,6 +154,9 @@
     }
   }
 
+  /**
+   * 处理不更新接口
+   */
   function handleNoSave () {
     // 从待更新列表删除
     // 从远端获取更新
@@ -169,6 +181,50 @@
         ViMessage.append('操作失败！', 2000)
       }
       deleteAid = undefined
+    }
+  }
+
+  function sendRequest () {
+    const now = apiStore.apiList.target
+    // 处理内容
+    console.log(apiStore.apiList.target)
+    console.log(handleUrl(now.url))
+    getAxios({
+      url: handleUrl(now.url),
+      method: parseMethod(now.method),
+      headers: now.headers,
+      data: now.body,
+      params: now.params
+    }).then(val => {
+      console.log(val)
+      responseView.value = val
+    })
+
+    function handleUrl (url: string) {
+      return url.replace('${BASE}', apiStore.apiList.base.url)
+    }
+
+    function parseMethod (method: number) {
+      switch (method) {
+        case Method.get:
+          return 'get'
+        case Method.put:
+          return 'put'
+        case Method.post:
+          return 'post'
+        case Method.head:
+          return 'head'
+        case Method.delete:
+          return 'delete'
+        case Method.connect:
+          return 'connect'
+        case Method.options:
+          return 'option'
+        case Method.patch:
+          return 'patch'
+        default:
+          return null
+      }
     }
   }
 </script>
@@ -228,10 +284,13 @@
     }
 
     .workspace-content {
-      --vi-scroll-width: 100%;
-      --vi-scroll-height: calc(100% - 40px);
+      overflow: hidden;
+      display: flex;
+      width: 100%;
+      height: calc(100% - 40px);
       background-color: var(--neko-content-bg-color);
       color: var(--neko-white-border-color);
+      flex-direction: column;
 
       .workspace-content__send {
         display: flex;
@@ -310,11 +369,30 @@
 
       .workspace-content__request {
         width: 100%;
+        flex: 1;
         padding: 0 10px;
         box-sizing: border-box;
 
         .nav-content {
           margin-top: 16px;
+        }
+      }
+
+      .workspace-content__response {
+        width: 100%;
+        --vi-flex-default-height: 40px;
+        --vi-flex-min-height: 20px;
+        --vi-flex-max-height: 400px;
+        padding: 6px;
+        background-color: var(--neko-content-bg-color);
+        box-shadow: 0 0 10px 0 var(--neko-white-bg-color),
+        0 0 0 1px var(--neko-white-bg-color);
+        box-sizing: border-box;
+
+        .workspace-content__response__title {
+          width: 100%;
+          padding-bottom: 8px;
+          border-bottom: 1px solid var(--neko-white-bg-color);
         }
       }
     }
