@@ -128,19 +128,24 @@ export const useApiStore = defineStore('api', () => {
       }
     }
     apiList.target = null
-    function formatApi (api: Api) {
-      if (!(api.params instanceof Object)) api.params = JSON.parse(api.params) ?? {
-        target: []
-      }
-      if (!(api.body instanceof Object)) api.body = JSON.parse(api.body) ?? {
-        target: []
-      }
-      if (!(api.headers instanceof Object)) api.headers = JSON.parse(api.headers) ?? {
-        target: []
-      }
-      if (!(api.authorization instanceof Object)) api.authorization = JSON.parse(api.authorization) ?? {
-        target: []
-      }
+  }
+
+  /**
+   * 格式化Api
+   * @param api 
+   */
+  function formatApi (api: Api) {
+    if (!(api.params instanceof Object)) api.params = JSON.parse(api.params) ?? {
+      target: []
+    }
+    if (!(api.body instanceof Object)) api.body = JSON.parse(api.body) ?? {
+      target: []
+    }
+    if (!(api.headers instanceof Object)) api.headers = JSON.parse(api.headers) ?? {
+      target: []
+    }
+    if (!(api.authorization instanceof Object)) api.authorization = JSON.parse(api.authorization) ?? {
+      target: []
     }
   }
   /**
@@ -344,6 +349,7 @@ export const useApiStore = defineStore('api', () => {
     groupApi,
     watingUpdateTabList,
     isWatingUpdate,
+    formatApi,
     updateApi,
     loadBase,
     loadApiList,

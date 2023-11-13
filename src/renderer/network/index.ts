@@ -9,18 +9,39 @@ export type Result<K = any> = {
   code: number
 }
 
-export function getAxios<K = any, T = any> (option: AxiosRequestConfig<T>): Promise<Result<K>> {
-  const myAxios = new Promise<{data: K,
-    msg: string,
-    code: number
-  }>((resolve) => {
-    axios(option).then(res => {
-      console.log(option.url, res.data)
-      resolve(res.data)
-    })
-  })
-  
-  return myAxios
+export async function getAxios<K = any, T = any> (option: AxiosRequestConfig<T>) {
+  const res = await axios(option)
+  console.log(option.url, res.data)
+  return res.data as Result<K>
+}
+
+export function parseMethod (method: number) {
+  switch (method) {
+    case Method.get:
+      return 'get'
+    case Method.put:
+      return 'put'
+    case Method.post:
+      return 'post'
+    case Method.head:
+      return 'head'
+    case Method.delete:
+      return 'delete'
+    case Method.connect:
+      return 'connect'
+    case Method.options:
+      return 'option'
+    case Method.patch:
+      return 'patch'
+    default:
+      return null
+  }
+}
+
+export type inputTableOption = {
+  target: { key: string, value: any }[],
+  pick: number[],
+  type?: string
 }
 
 export type Api = {
@@ -33,10 +54,10 @@ export type Api = {
   type: number // 0 基础 1 接口 2 分组
   method: number | null
   url: string
-  params: string | any
-  headers: string | any
-  authorization: string | any
-  body: string | any
+  params: string | inputTableOption
+  headers: string | inputTableOption
+  authorization: string | inputTableOption
+  body: string | inputTableOption // 有type
   update_time: Date
   create_time: Date
 }
