@@ -4,20 +4,20 @@ import { defineStore } from 'pinia'
 import { useApiStore } from './api-store'
 import { parseMethod } from '../network'
 import type { Api, inputTableOption } from '../network'
-import type { AxiosRequestConfig } from 'axios'
+import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 export const useNetworkStore = defineStore('network', () => {
   const apiStore = useApiStore()
-  const networkInfo = reactive({
-    request: null,
-    response: null
-  })
+  // 以aid储存
+  const responseMap = reactive(new Map<string, AxiosResponse>())
+
+  const nowResponse = computed(() => responseMap.get(apiStore.apiList.target.aid))
 
   async function sendApi (api: Api, ...apis: Api[]) {
     const options = parseApiToAxiosOption(api, ...apis)
     axios(options).then(res => {
       console.log(res)
-      networkInfo.response = res
+      responseMap.set(api.aid, res)
     })
     // .catch(err => {
     //   networkInfo.response = err      
@@ -98,7 +98,7 @@ export const useNetworkStore = defineStore('network', () => {
   }
 
   return {
-    networkInfo,
+    nowResponse,
     sendApi,
     parseApiToAxiosOption
   }

@@ -20,10 +20,13 @@
         </div>
       </div>
       <!-- 响应内容部分 -->
-      <vi-flex class="workspace-content__response" horizontal="top" vertical="none">
+      <vi-flex class="workspace-content__response" horizontal="top" vertical="none" v-if="!apiStore.isBaseOpen">
         <div class="workspace-content__response__title">Response</div>
-        <div class="workspace-content__response__content">
-          {{ networkStore.networkInfo.response }}
+        <div class="workspace-content__response__content" v-if="networkStore.nowResponse">
+          {{ networkStore.nowResponse }}
+        </div>
+        <div v-else>
+          暂无响应内容
         </div>
       </vi-flex>
     </div>

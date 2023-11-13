@@ -1,8 +1,6 @@
 import axios from 'axios'
 import type { AxiosRequestConfig } from 'axios'
 
-axios.defaults.baseURL='http://localhost:3000'
-
 export type Result<K = any> = {
   data: K,
   msg: string,
@@ -10,6 +8,7 @@ export type Result<K = any> = {
 }
 
 export async function getAxios<K = any, T = any> (option: AxiosRequestConfig<T>) {
+  option.baseURL = 'http://localhost:3000'
   const res = await axios(option)
   console.log(option.url, res.data)
   return res.data as Result<K>

@@ -1,6 +1,6 @@
 <template>
   <div class="neko-headers-choose" v-show="!apiStore.isBaseOpen">
-    <vi-radio-group>
+    <vi-radio-group v-model="typeValue">
       <vi-radio value="none"></vi-radio>
       <vi-radio value="form-data"></vi-radio>
       <vi-radio value="x-www-form-urlencoded"></vi-radio>
@@ -29,8 +29,10 @@
 
 <script lang="ts" setup>
 import { useApiStore } from '@/renderer/store'
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 const apiStore = useApiStore()
+
+const typeValue = ref()
 
 const inputValue = computed(() => {
   const body = apiStore.apiList.target.body

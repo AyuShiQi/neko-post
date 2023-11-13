@@ -139,11 +139,14 @@ export const useApiStore = defineStore('api', () => {
       target: []
     }
     if (!(api.body instanceof Object)) api.body = JSON.parse(api.body) ?? {
-      target: []
+      target: [],
+
     }
     if (!(api.headers instanceof Object)) api.headers = JSON.parse(api.headers) ?? {
-      target: []
+      target: [],
+      type: 'none'
     }
+    if (!(api.headers as any).type) (api.headers as any).type = 'none'
     if (!(api.authorization instanceof Object)) api.authorization = JSON.parse(api.authorization) ?? {
       target: []
     }

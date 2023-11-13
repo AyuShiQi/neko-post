@@ -2,7 +2,6 @@
   <div class="neko-main-apis">
     <vi-flex
     class="neko-apis-list"
-    style="height: 100%;"
     horizontal="none">
       <!-- api-list头部栏 -->
       <div class="neko-apis-list__header">
@@ -141,6 +140,7 @@ onBeforeUnmount(() => {
 
   .neko-apis-list {
     overflow: hidden;
+    height: 100%;
     --vi-flex-default-width: 260px;
     --vi-flex-min-width: 0px;
     --vi-flex-max-width: 260px;
