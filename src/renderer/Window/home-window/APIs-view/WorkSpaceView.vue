@@ -22,9 +22,7 @@
       <!-- 响应内容部分 -->
       <vi-flex class="workspace-content__response" horizontal="top" vertical="none" v-if="!apiStore.isBaseOpen">
         <div class="workspace-content__response__title">Response</div>
-        <div class="workspace-content__response__content" v-if="networkStore.nowResponse">
-          {{ networkStore.nowResponse }}
-        </div>
+        <ResponsePart v-if="networkStore.nowResponse"/>
         <div v-else>
           暂无响应内容
         </div>
@@ -39,6 +37,7 @@
 <script lang="ts" setup>
 import ApiTab from './comps/ApiTab.vue'
 import UrlSend from './comps/UrlSend.vue'
+import ResponsePart from './comps/ResponsePart.vue'
 import ParamsContent from './ParamsContent.vue'
 import AuthorizationContent from './AuthorizationContent.vue'
 import HeadersContent from './HeadersContent.vue'
@@ -97,14 +96,16 @@ function handleNavChange (id: 0) {
         }
       }
       .workspace-content__response {
+        display: flex;
         width: 100%;
-        --vi-flex-default-height: 40px;
-        --vi-flex-min-height: 20px;
+        --vi-flex-default-height: 100px;
+        --vi-flex-min-height: 30px;
         --vi-flex-max-height: 400px;
         padding: 6px;
         background-color: var(--neko-content-bg-color);
         box-shadow: 0 0 10px 0 var(--neko-white-bg-color),
         0 0 0 1px var(--neko-white-bg-color);
+        flex-direction: column;
         box-sizing: border-box;
         .workspace-content__response__title {
           width: 100%;

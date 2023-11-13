@@ -122,15 +122,16 @@ function handleNoSave () {
   .neko-workspce-header {
     width: 100%;
     height: 40px;
+    color: var(--neko-grey-font-color);
     background-color: var(--neko-content-bg-color);
     box-sizing: border-box;
-    --vi-tab-card-height: 40px;
+    user-select: none;
 
+    --vi-tab-card-height: 40px;
     --vi-background-color-solid: var(--neko-tab-color-s);
     --vi-background-color-deep: var(--neko-tab-color);
     --vi-bg-color-deep-alpha: var(--neko-bg-color-s);
     --vi-bg-color-deeper-alpha: var(--neko-main-bg-color);
-    color: var(--neko-grey-font-color);
 
     .neko-tab-card-wating-update {
       position: relative;
