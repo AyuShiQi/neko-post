@@ -114,16 +114,16 @@ export const useApiStore = defineStore('api', () => {
     if (newAid) aid.value = newAid
     if (!aid.value) return
     if (aid.value === apiList.base.aid) {
-      apiList.target = apiList.base
       // 把目标变为对象
       formatApi(apiList.base)
+      apiList.target = apiList.base
       return
     }
     for (const api of apiList.list) {
       if (api.aid === aid.value) {
-        apiList.target = api
         // 把目标变为对象
         formatApi(api)
+        apiList.target = api
         return
       }
     }
@@ -135,12 +135,12 @@ export const useApiStore = defineStore('api', () => {
    * @param api 
    */
   function formatApi (api: Api) {
+    console.log('format')
     if (!(api.params instanceof Object)) api.params = JSON.parse(api.params) ?? {
       target: []
     }
     if (!(api.body instanceof Object)) api.body = JSON.parse(api.body) ?? {
       target: [],
-
     }
     if (!(api.headers instanceof Object)) api.headers = JSON.parse(api.headers) ?? {
       target: [],

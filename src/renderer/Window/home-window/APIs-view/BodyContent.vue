@@ -1,6 +1,6 @@
 <template>
   <div class="neko-headers-choose" v-show="!apiStore.isBaseOpen">
-    <vi-radio-group v-model="typeValue">
+    <vi-radio-group v-model="typeValue" @change="handleModeChange">
       <vi-radio value="none"></vi-radio>
       <vi-radio value="form-data"></vi-radio>
       <vi-radio value="x-www-form-urlencoded"></vi-radio>
@@ -29,10 +29,10 @@
 
 <script lang="ts" setup>
 import { useApiStore } from '@/renderer/store'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 const apiStore = useApiStore()
 
-const typeValue = ref()
+const typeValue = ref('none')
 
 const inputValue = computed(() => {
   const body = apiStore.apiList.target.body
@@ -52,12 +52,34 @@ const pickValue = computed(() => {
   return []
 })
 
+const originTypeValue = computed(() => {
+  const body = apiStore.apiList.target.body
+  if (body instanceof Object) {
+    return body.type
+  }
+  return 'none'
+})
+
+watch(originTypeValue, () => {
+  typeValue.value = originTypeValue.value
+})
+/**
+ * 添加更新节点
+ */
 function handleUpdate () {
   apiStore.addWatingUpdateTab(apiStore.aid)
 }
 
 function handlePickValueChange () {
   apiStore.addWatingUpdateTab(apiStore.aid)
+}
+
+function handleModeChange () {
+  const body = apiStore.apiList.target.body
+  if (body instanceof Object) {
+    body.type = typeValue.value
+  }
+  handleUpdate()
 }
 </script>
 
