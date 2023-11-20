@@ -128,18 +128,26 @@ function changeMethod () {
  * @param fromMap 结果集
  * @param res 结果
  */
-async function handleLoginSubmit (fromMap: Map<string, string>, res: boolean) {
+async function handleLoginSubmit (fromMap: Map<string, string>, res: boolean, { getSubmitFeedback }) {
   // if (res) profileStore.isLogin = true
   if (!res) return
   const val = await login(username.value, password.value)
   if (val.code === 200) {
-    ViMessage.append('登陆成功')
+    ViMessage.append('登陆成功', 10000)
     profileStore.toLoginChangeInfo(val.data.token, val.data.uid, val.data.username)
     updateUserInfo({
       username: username.value,
       password: password.value,
       token: val.data.token
     })
+  } else if (val.code === 500) {
+    const feedBackMap = new Map<string, string>()
+    feedBackMap.set('username', val.msg)
+    getSubmitFeedback(feedBackMap)
+  } else if (val.code === 501) {
+    const feedBackMap = new Map<string, string>()
+    feedBackMap.set('password', val.msg)
+    getSubmitFeedback(feedBackMap)
   }
 }
 
