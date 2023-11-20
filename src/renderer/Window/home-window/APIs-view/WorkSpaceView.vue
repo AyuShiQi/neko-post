@@ -4,6 +4,8 @@
     <div class="workspace-content" v-if="apiStore.aid">
       <!-- 发送部分 -->
       <UrlSend/>
+      <!-- desc编辑区 -->
+      <DescEdditor/>
       <!-- 请求部分 -->
       <div class="workspace-content__request vi-scroll-bar">
         <vi-nav @change="handleNavChange">
@@ -34,6 +36,7 @@
 <script lang="ts" setup>
 import ApiTab from './comps/ApiTab.vue'
 import UrlSend from './comps/UrlSend.vue'
+import DescEdditor from './comps/DescEdditor.vue'
 import ResponsePart from './comps/ResponsePart.vue'
 import ParamsContent from './ParamsContent.vue'
 import AuthorizationContent from './AuthorizationContent.vue'

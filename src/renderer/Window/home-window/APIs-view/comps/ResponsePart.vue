@@ -46,9 +46,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import { useApiStore, useNetworkStore } from '@/renderer/store'
-const apiStore = useApiStore()
+import { ref } from 'vue'
+import { useNetworkStore } from '@/renderer/store'
+// const apiStore = useApiStore()
 const networkStore = useNetworkStore()
 
 const navPick = ref(0)
