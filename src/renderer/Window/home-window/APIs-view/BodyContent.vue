@@ -11,6 +11,7 @@
   </div>
   <vi-input-table
   class="neko-input-table"
+  v-if="typeValue !== 'none' && typeValue !== 'raw' && typeValue !== 'binary'"
   v-show="!apiStore.isBaseOpen"
   extension
   multi
@@ -22,6 +23,12 @@
     <vi-input-table-col value="value" style="--vi-table-td-width: 280px"></vi-input-table-col>
     <vi-input-table-col value="description" style="--vi-table-td-width: 200px"></vi-input-table-col>
   </vi-input-table>
+  <div v-else-if="typeValue === 'raw'"  class="neko-areax" style="white-space: pre;">
+    {{ rawString }}
+  </div>
+  <div v-else contenteditable class="neko-areax">
+    暂不支持binary传输，后续版本上线
+  </div>
   <div v-show="apiStore.isBaseOpen">
     暂无内容
   </div>
@@ -41,6 +48,10 @@ const inputValue = computed(() => {
     return body.target
   }
   return []
+})
+
+const rawString = computed(() => {
+  return handleToDataObj()
 })
 
 const pickValue = computed(() => {
@@ -81,6 +92,16 @@ function handleModeChange () {
   }
   handleUpdate()
 }
+
+function handleToDataObj () {
+  const res = {} as any
+  if (!(inputValue.value instanceof Array)) return res
+  for (const item of inputValue.value) {
+    res[item.key] = item.value
+  }
+  console.log('res', res)
+  return res
+}
 </script>
 
 <style lang="less" scoped>
@@ -95,5 +116,16 @@ function handleModeChange () {
     margin-top: 16px;
     --vi-background-color: var(--neko-content-bg-color);
     --vi-background-color-solid: var(--neko-content-bg-color-solid);
+  }
+
+  .neko-areax {
+    width: 100%;
+    min-height: 300px;
+    padding: 8px;
+    margin-top: 8px;
+    border: 1px solid var(--neko-white-border-color);
+    border-radius: 3px;
+    outline: none;
+    box-sizing: border-box;
   }
 </style>

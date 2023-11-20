@@ -1,5 +1,6 @@
 import { reactive, ref, watch, computed } from 'vue'
 import axios from 'axios'
+import Qs from 'qs'
 import { defineStore } from 'pinia'
 import { useApiStore } from './api-store'
 import { parseMethod } from '../network'
@@ -16,7 +17,7 @@ export const useNetworkStore = defineStore('network', () => {
   async function sendApi (api: Api, ...apis: Api[]) {
     const options = parseApiToAxiosOption(api, ...apis)
     axios(options).then(res => {
-      console.log(res)
+      // console.log(res)
       responseMap.set(api.aid, res)
     })
     // .catch(err => {
@@ -30,6 +31,9 @@ export const useNetworkStore = defineStore('network', () => {
    * @returns axios形式option
    */
   function parseApiToAxiosOption (target: Api, ...apis: Api[]): AxiosRequestConfig {
+    /**
+     * 包含所有的Api(顺序从base到当前)
+     */
     const total = [...apis].reverse()
     total.push(target)
     const inputRes = {
@@ -93,7 +97,24 @@ export const useNetworkStore = defineStore('network', () => {
           res[target.key] = target.value
         }
       }
-      return res
+      switch ((target.body as inputTableOption).type) {
+        case 'form-data':
+          const formData = new FormData()
+          for (const name in res) {
+            formData.set(name, res[name])
+          }
+          return formData
+        case 'x-www-form-urlencoded':
+          return Qs.stringify(res)
+        case 'none':
+          return undefined
+        case 'binary':
+          return ''  
+        case 'JSON':
+        case 'raw':
+        default: 
+          return res
+      }
     }
   }
 
