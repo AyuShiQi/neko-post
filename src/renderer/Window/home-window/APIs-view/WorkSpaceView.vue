@@ -101,7 +101,7 @@ function handleNavChange (id: 0) {
         --vi-flex-max-height: 400px;
         --vi-scroll-bar-color: var(--neko-white-bg-color-s);
         --vi-scroll-bar-color-hover: var(--neko-white-bg-color);
-        padding: 6px;
+        padding: 6px 0;
         background-color: var(--neko-content-bg-color);
         box-shadow: 0 0 10px 0 var(--neko-white-bg-color),
         0 0 0 1px var(--neko-white-bg-color);
@@ -109,6 +109,7 @@ function handleNavChange (id: 0) {
         box-sizing: border-box;
         .workspace-content__response__title {
           width: 100%;
+          padding-left: 6px;
           padding-bottom: 8px;
           border-bottom: 1px solid var(--neko-white-bg-color);
           color: #fff;

@@ -12,24 +12,28 @@
         <span>{{ networkStore.nowResponse.status }}</span>
         <span class="color-blue">{{ networkStore.nowResponse.statusText }}</span>
       </div>
-      <vi-collapse title="响应标头 headers"></vi-collapse>
-        <div v-for="item of networkStore.nowResponse?.headers" class="response-item">
+      <vi-collapse title="响应标头 headers">
+        <div v-for="item of networkStore.nowResponse?.headers" class="response-item body-view">
           <span>{{ item[0] }}：</span>
           <span>{{ item[1] }}</span>
         </div>
       </vi-collapse>
-      <vi-collapse title="响应体 data" class="body-view">
-        {{ networkStore.nowResponse?.data }}
-      </vi-collapse>
-      <vi-collapse title="请求参数 request" class="body-view">
-        <div v-for="item of networkStore.nowResponse?.config?.headers" class="response-item">
-          <span>{{ item[0] }}：</span>
-          <span>{{ item[1] }}</span>
+      <vi-collapse title="响应体 data">
+        <div class="body-view">
+          {{ networkStore.nowResponse?.data }}
         </div>
-        <vi-divider style="margin: 4px 0;"/>
-        <div class="response-item" v-for="item of ['method', 'url', 'params', 'data']">
-          <span>{{ item }}：</span>
-          <span>{{ networkStore.nowResponse?.config?.[item] }}</span>
+      </vi-collapse>
+      <vi-collapse title="请求参数 request">
+        <div class="body-view">
+          <div v-for="item of networkStore.nowResponse?.config?.headers" class="response-item">
+            <span>{{ item[0] }}：</span>
+            <span>{{ item[1] }}</span>
+          </div>
+          <vi-divider style="margin: 4px 0;"/>
+          <div class="response-item" v-for="item of ['method', 'url', 'params', 'data']">
+            <span>{{ item }}：</span>
+            <span>{{ networkStore.nowResponse?.config?.[item] }}</span>
+          </div>
         </div>
       </vi-collapse>
     </div>
@@ -80,13 +84,19 @@ const navPick = ref(0)
   // background-color: #fff;
 
   .nav-content {
+    padding: 0 6px;
     margin-bottom: 8px;
   }
 
   .response-content {
     --vi-collapse-width: 100%;
+    --vi-collapse-border-color: none;
+    --vi-collapse-title-pdding: .6em 6px;
+    --vi-collapse-border-color: var(--vi-purple-color6);
+    --vi-collapse-title-bg-color: var(--vi-purple-color5);
     .response-status {
       display: flex;
+      padding: 0 6px;
       margin-bottom: 8px;
       align-items: center;
       gap: 6px;
@@ -116,6 +126,7 @@ const navPick = ref(0)
     }
 
     .body-view {
+      padding: 0 6px;
       white-space: pre;
       line-height: 1.5em;
     }
