@@ -8,8 +8,10 @@
     <!-- 基础信息展示 -->
     <div class="response-content" v-show="navPick === 0" v-if="networkStore.nowResponse">
       <div class="response-status">
-        <div class="status-attention"></div>
-        <span>{{ networkStore.nowResponse.status }}</span>
+        <div class="status-attention" :style="{
+          backgroundColor: networkStore.isError ? 'var(--vi-red-color1)' : 'var(--vi-green-color1)'
+        }"></div>
+        <span class="color-blue">{{ networkStore.nowResponse.status }}</span>
         <span class="color-blue">{{ networkStore.nowResponse.statusText }}</span>
       </div>
       <vi-collapse title="响应标头 headers">
@@ -96,7 +98,7 @@ const navPick = ref(0)
     --vi-collapse-title-bg-color: var(--vi-purple-color5);
     .response-status {
       display: flex;
-      padding: 0 6px;
+      padding: 4px 6px;
       margin-bottom: 8px;
       align-items: center;
       gap: 6px;
@@ -109,6 +111,7 @@ const navPick = ref(0)
       }
 
       .color-blue {
+        font-weight: 600;
         color: var(--vi-blue-color3);
       }
     }

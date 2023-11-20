@@ -26,7 +26,7 @@
   <div v-else-if="typeValue === 'raw'"  class="neko-areax" style="white-space: pre;">
     {{ rawString }}
   </div>
-  <div v-else contenteditable class="neko-areax">
+  <div v-else-if="typeValue === 'binary'" contenteditable class="neko-areax">
     暂不支持binary传输，后续版本上线
   </div>
   <div v-show="apiStore.isBaseOpen">

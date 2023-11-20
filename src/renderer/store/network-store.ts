@@ -13,6 +13,13 @@ export const useNetworkStore = defineStore('network', () => {
   const responseMap = reactive(new Map<string, AxiosResponse>())
 
   const nowResponse = computed(() => responseMap.get(apiStore.apiList.target.aid))
+  /**
+   * 目标响应是否是错误的
+   */
+  const isError = computed(() => {
+    const t = String(nowResponse.value.status)[0]
+    return t === '4' || t === '5'
+  })
 
   async function sendApi (api: Api, ...apis: Api[]) {
     const options = parseApiToAxiosOption(api, ...apis)
@@ -20,9 +27,9 @@ export const useNetworkStore = defineStore('network', () => {
       // console.log(res)
       responseMap.set(api.aid, res)
     })
-    // .catch(err => {
-    //   networkInfo.response = err      
-    // })
+    .catch(err => {
+      responseMap.set(api.aid, err.response) 
+    })
   }
 
   /**
@@ -120,6 +127,7 @@ export const useNetworkStore = defineStore('network', () => {
 
   return {
     nowResponse,
+    isError,
     sendApi,
     parseApiToAxiosOption
   }
