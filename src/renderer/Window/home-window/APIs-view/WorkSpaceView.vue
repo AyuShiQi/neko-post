@@ -22,10 +22,7 @@
       <!-- 响应内容部分 -->
       <vi-flex class="workspace-content__response" horizontal="top" vertical="none" v-if="!apiStore.isBaseOpen">
         <div class="workspace-content__response__title">Response</div>
-        <ResponsePart v-if="networkStore.nowResponse"/>
-        <div v-else>
-          暂无响应内容
-        </div>
+        <ResponsePart/>
       </vi-flex>
     </div>
     <div class="workspace-content-temp" v-else>
@@ -93,6 +90,7 @@ function handleNavChange (id: 0) {
 
         .nav-content {
           margin-top: 16px;
+          --vi-table-border-color: var(--neko-white-border-color);
         }
       }
       .workspace-content__response {
@@ -101,6 +99,8 @@ function handleNavChange (id: 0) {
         --vi-flex-default-height: 100px;
         --vi-flex-min-height: 30px;
         --vi-flex-max-height: 400px;
+        --vi-scroll-bar-color: var(--neko-white-bg-color-s);
+        --vi-scroll-bar-color-hover: var(--neko-white-bg-color);
         padding: 6px;
         background-color: var(--neko-content-bg-color);
         box-shadow: 0 0 10px 0 var(--neko-white-bg-color),
@@ -111,6 +111,9 @@ function handleNavChange (id: 0) {
           width: 100%;
           padding-bottom: 8px;
           border-bottom: 1px solid var(--neko-white-bg-color);
+          color: #fff;
+          font-size: 16px;
+          font-weight: 600;
         }
       }
     }
