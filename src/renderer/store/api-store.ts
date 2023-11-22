@@ -58,7 +58,6 @@ export const useApiStore = defineStore('api', () => {
   watch(aid, () => {
     loadTargetApi()
     isChangeTarget.value = true
-    console.log('desc', apiList.target.desc)
   })
 
   // 监听pid改变

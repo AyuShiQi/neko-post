@@ -13,7 +13,9 @@ import { ref, onMounted } from 'vue'
 import { useApiStore } from '@/renderer/store'
 const apiStore = useApiStore()
 
-const range = getSelection()
+const range = document.createRange()
+const selection = document.getSelection()
+
 const textarea = ref()
 
 function handleInput () {
@@ -22,14 +24,20 @@ function handleInput () {
   textarea.value.blur()
   // 光标移动至末位
   setTimeout(() => {
-    range.collapseToEnd()
-    textarea.value.focus()
+    moveCaretToEndOrStart()
   })
 }
 
-onMounted(() => {
-  range.selectAllChildren(textarea.value)
-})
+/**
+ * 移动光标
+ * @param mode false为末位，true为首行
+ */
+function moveCaretToEndOrStart (mode = false) {
+  range.selectNodeContents(textarea.value)
+  range.collapse(mode)
+  selection.removeAllRanges()
+  selection.addRange(range)
+}
 </script>
 
 <style lang="less" scoped>
