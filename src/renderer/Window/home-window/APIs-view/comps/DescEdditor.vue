@@ -4,21 +4,32 @@
     <div class="text" contenteditable
     @input="handleInput"
     ref="textarea"
-    :v-html="apiStore.apiList.target.desc"></div>
+    v-html="apiStore.apiList.target.desc"></div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useApiStore } from '@/renderer/store'
 const apiStore = useApiStore()
 
+const range = getSelection()
 const textarea = ref()
 
 function handleInput () {
   apiStore.addWatingUpdateTab(apiStore.apiList.target.aid)
   apiStore.apiList.target.desc = textarea.value.innerHTML
+  textarea.value.blur()
+  // 光标移动至末位
+  setTimeout(() => {
+    range.collapseToEnd()
+    textarea.value.focus()
+  })
 }
+
+onMounted(() => {
+  range.selectAllChildren(textarea.value)
+})
 </script>
 
 <style lang="less" scoped>
@@ -40,7 +51,7 @@ function handleInput () {
       line-height: 1.4em;
       border-radius: 3px;
       outline: none;
-      white-space: pre;
+      white-space: pre-wrap;
     }
   }
 </style>
