@@ -52,24 +52,37 @@ import { useNetworkStore } from '@/renderer/store'
 const networkStore = useNetworkStore()
 
 const navPick = ref(0)
-// function parseJsonMode (obj: string | object) {
+// function parseJsonMode (obj: any, preSpace = 4) {
+//   console.log(obj, typeof obj)
+//   if (typeof obj !== 'object') return obj
 //   const res = [] as string[]
 //   parseMode(obj, 0)
-//   console.log(res)
 //   return res.reduce((pre, now) => {
 //     return pre + '\n' + now
-//   })
+//   }, '')
 
-//   function parseMode (target: any, step: number, pre: string = '') {
+//   function parseMode (target: any, step: number, pre = '') {
 //     const type = typeof target
-//     if (['string', 'boolean', 'boolean', 'null', 'undefined'].includes(type)) return `${' '.repeat(step)}${pre}${target}`
+//     if (['string', 'boolean', 'boolean', 'null', 'undefined'].includes(type))
+//       return `${' '.repeat(step)}${pre}${target}`
 //     else if (type === 'object') {
 //       // 进入深度遍历
-//       res.push(`${' '.repeat(step)}${pre}{`);
-//       for (const name in target) {
-//         res.push(parseMode(target[name], step + 2, name + '：'))
+//       if (target instanceof Array) {
+//         let tstr = ''
+//         if (tstr.length !== 0) {
+//           tstr += target[0]
+//           for (let i = 1; i < target.length; i++) {
+//            tstr += `, ${target[i]}`
+//           }
+//         }
+//         res.push(`${' '.repeat(step)}${pre}[${tstr}]`)
+//       } else {
+//         res.push(`${' '.repeat(step)}${pre}{`);
+//         for (const name in target) {
+//           res.push(parseMode(target[name], step + preSpace, name + '：'))
+//         }
+//         res.push(`${' '.repeat(step)}}`)
 //       }
-//       res.push(`${' '.repeat(step)}}`)
 //     }
 //     return `${' '.repeat(step)}${pre}undefined`
 //   }
@@ -118,6 +131,7 @@ const navPick = ref(0)
 
     .response-item {
       padding: 4px 0;
+      white-space: pre;
       span:first-child {
         color: var(--neko-grey-font-color);
         font-weight: 600;

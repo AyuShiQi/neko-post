@@ -1,13 +1,16 @@
-import { reactive, ref, watch, computed } from 'vue'
+import { reactive, computed } from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
 import { defineStore } from 'pinia'
+import { useProfileStore } from './profile-store'
 import { useApiStore } from './api-store'
 import { parseMethod } from '../network'
+import { saveResp } from '../network/resp'
 import type { Api, inputTableOption } from '../network'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 export const useNetworkStore = defineStore('network', () => {
+  const profileStore = useProfileStore()
   const apiStore = useApiStore()
   // 以aid储存
   const responseMap = reactive(new Map<string, AxiosResponse>())
@@ -21,13 +24,19 @@ export const useNetworkStore = defineStore('network', () => {
     return t === '4' || t === '5'
   })
 
+  /**
+   * 发送对应Api请求
+   * @param api api
+   * @param apis 基础配置（从最近到base）
+   */
   async function sendApi (api: Api, ...apis: Api[]) {
     const options = parseApiToAxiosOption(api, ...apis)
     axios(options).then(res => {
-      // console.log(res)
+      console.log(res)
       responseMap.set(api.aid, res)
     })
     .catch(err => {
+      console.log(err)
       responseMap.set(api.aid, err.response) 
     })
   }
@@ -52,7 +61,6 @@ export const useNetworkStore = defineStore('network', () => {
       timeout: 20000,
       timeoutErrorMessage: '超时啦'
     } as AxiosRequestConfig
-    console.log(inputRes)
     return inputRes
 
     function parseUrl () {
@@ -125,10 +133,23 @@ export const useNetworkStore = defineStore('network', () => {
     }
   }
 
+  /**
+   * 保存响应
+   * @param response 响应
+   * @param type 0为cur 1为histroy 
+   */
+  async function saveResponse (response: AxiosResponse, type = 0) {
+    const res = saveResp(profileStore.token, profileStore.uid, profileStore.pid, apiStore.aid, type, response)
+    console.log(res)
+    // 若为1, 更新response列表
+    // 若为0, 更新当前response
+  }
+
   return {
     nowResponse,
     isError,
     sendApi,
-    parseApiToAxiosOption
+    parseApiToAxiosOption,
+    saveResponse
   }
 })

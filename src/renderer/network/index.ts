@@ -61,6 +61,22 @@ export type Api = {
   create_time: Date
 }
 
+export type Resp = {
+  rid: string,
+  aid: string
+  uid: string
+  pid: string
+  gid: string
+  type: number // 0 cur 1 histroy
+  status: number
+  statusText: string
+  headers: string | any
+  body: string | any,
+  request: string | any,
+  update_time: Date
+  create_time: Date
+}
+
 export enum Method {
   get,
   put,
