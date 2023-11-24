@@ -21,7 +21,7 @@ export const useNetworkStore = defineStore('network', () => {
    */
   const isError = computed(() => {
     const t = String(nowResponse.value.status)[0]
-    return t === '4' || t === '5'
+    return t === '4' || t === '5' || t === '' || t === undefined
   })
 
   /**
@@ -29,7 +29,7 @@ export const useNetworkStore = defineStore('network', () => {
    * @param api api
    * @param apis 基础配置（从最近到base）
    */
-  async function sendApi (api: Api, ...apis: Api[]) {
+  function sendApi (api: Api, ...apis: Api[]) {
     const options = parseApiToAxiosOption(api, ...apis)
     axios(options).then(res => {
       console.log(res)
@@ -37,7 +37,7 @@ export const useNetworkStore = defineStore('network', () => {
     })
     .catch(err => {
       console.log(err)
-      responseMap.set(api.aid, err.response) 
+      responseMap.set(api.aid, err.response ?? { status: '', statusText: '无响应返回', config: err.config}) 
     })
   }
 

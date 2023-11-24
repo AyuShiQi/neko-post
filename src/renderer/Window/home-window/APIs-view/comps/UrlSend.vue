@@ -38,6 +38,7 @@
 
 <script lang="ts" setup>
 import { useApiStore, useNetworkStore } from '@/renderer/store'
+import { ViMessage } from 'viog-ui'
 const apiStore = useApiStore()
 const networkStore = useNetworkStore()
 

@@ -39,7 +39,7 @@ import { useApiStore } from '@/renderer/store'
 import { ref, computed, watch } from 'vue'
 const apiStore = useApiStore()
 
-const typeValue = ref('none')
+const typeValue = ref()
 
 const inputValue = computed(() => {
   const body = apiStore.apiList.target.body
@@ -73,7 +73,7 @@ const originTypeValue = computed(() => {
 
 watch(originTypeValue, () => {
   typeValue.value = originTypeValue.value
-})
+}, { immediate: true })
 /**
  * 添加更新节点
  */

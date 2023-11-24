@@ -39,7 +39,7 @@
         </div>
       </vi-collapse>
     </div>
-    <div v-show="navPick === 0" v-else>
+    <div v-show="navPick === 0" v-else class="response_content_none">
       暂无响应内容
     </div>
   </div>
@@ -147,6 +147,10 @@ const navPick = ref(0)
       white-space: pre;
       line-height: 1.5em;
     }
+  }
+
+  .response_content_none {
+    padding: 6px;
   }
 }
 </style>
