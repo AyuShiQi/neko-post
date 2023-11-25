@@ -2,8 +2,8 @@
   <div class="neko-workspace-content__response__content vi-scroll-bar">
     <!-- tab区域 -->
     <vi-nav class="nav-content" v-model="navPick">
-      <vi-nav-item>current</vi-nav-item>
-      <vi-nav-item>history</vi-nav-item>
+      <vi-nav-item>Current</vi-nav-item>
+      <vi-nav-item>History</vi-nav-item>
     </vi-nav>
     <!-- 基础信息展示 -->
     <div class="response-content" v-show="navPick === 0" v-if="networkStore.nowResponse">
@@ -42,6 +42,47 @@
     <div v-show="navPick === 0" v-else class="response_content_none">
       暂无响应内容
     </div>
+    <vi-collapse-group v-show="navPick === 1" class="response-content__list" accordion>
+      <vi-collapse v-for="item of networkStore.repsList">
+        <template v-slot:title>
+          <div class="response-title">
+            <div class="response-status">
+              <div class="status-attention" :style="{
+                backgroundColor: isError(item.status) ? 'var(--vi-red-color1)' : 'var(--vi-green-color1)'
+              }"></div>
+              <span class="color-blue">{{ item.status }}</span>
+              <span class="color-blue">{{ item.statusText }}</span>
+            </div>
+            <span>
+              {{ formatTime(item['create_time']) }}
+            </span>
+          </div>
+        </template>
+        <div class="response-else">
+          <ul>
+            <li v-for="header of parseJsonStrObj(item.headers)">
+              {{ header[0] }}：{{ header[1] }}
+            </li>
+          </ul>
+          <vi-divider/>
+          <!-- <dd>
+            <dt>Body</dt>
+            <dd v-for="data of parseJsonStrObj(item.body)">
+              <span>{{ data[0] }}：</span>
+              <span>{{ data[1] }}</span>
+            </dd>
+          </dd> -->
+          <dd>
+            <dt>请求参数</dt>
+            <dd v-for="data of parseJsonStrObj(item.request)">
+              <span>{{ data[0] }}：</span>
+              <span>{{ data[1] }}</span>
+            </dd>
+          </dd>
+        </div>
+        {{ item }}
+      </vi-collapse>
+    </vi-collapse-group>
   </div>
 </template>
 
@@ -87,6 +128,25 @@ const navPick = ref(0)
 //     return `${' '.repeat(step)}${pre}undefined`
 //   }
 // }
+function isError (status: number) {
+  const t = String(status)[0]
+  return t === '4' || t === '5' || t === '' || t === undefined
+}
+
+function formatTime (time: string) {
+  const date = new Date(time)
+  return `${date.getFullYear()}.${date.getMonth()}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`
+}
+
+function* parseJsonStrObj(json_str: string) {
+  const obj = JSON.parse(json_str)
+  if (typeof obj !== 'object') yield ['', obj]
+  else {
+    for (const item in obj) {
+      yield [item, obj[item]]
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -151,6 +211,35 @@ const navPick = ref(0)
 
   .response_content_none {
     padding: 6px;
+  }
+
+  .response-content__list {
+    --vi-collapse-width: 100%;
+    --vi-collapse-border-color: none;
+    --vi-collapse-title-pdding: .6em 20px .6em 6px;
+    --vi-collapse-arrow-color: none;
+    --vi-collapse-border-color: var(--neko-blue-color);
+    --vi-collapse-title-bg-color: var(--neko-blue-bg-color);
+
+    .response-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .response-status {
+        display: flex;
+        gap: 8px;
+        .status-attention {
+          width: 1em;
+          height: 1em;
+          border-radius: 50%;
+        }
+
+        .color-blue {
+          color: var(--vi-blue-color3);
+        }
+      }
+    }
   }
 }
 </style>

@@ -67,7 +67,7 @@ export type Resp = {
   uid: string
   pid: string
   gid: string
-  type: number // 0 cur 1 histroy
+  type: RespType // 0 cur 1 histroy
   status: number
   statusText: string
   headers: string | any
@@ -75,6 +75,11 @@ export type Resp = {
   request: string | any,
   update_time: Date
   create_time: Date
+}
+
+export enum RespType {
+  default,
+  fix
 }
 
 export enum Method {

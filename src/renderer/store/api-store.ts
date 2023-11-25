@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { getApiList as getApiListInterface, getBase, getGroupList, updateApi as updateApiInterface, delApi as da, delApiGroup as dg} from '../network/api'
 import type { Api } from '../network'
 import { useProfileStore } from './profile-store'
+import { globalOberver } from '@/common/observer'
 /**
  * api接口信息
  */
@@ -58,6 +59,7 @@ export const useApiStore = defineStore('api', () => {
   watch(aid, () => {
     loadTargetApi()
     isChangeTarget.value = true
+    globalOberver.emit('update-aid', aid.value)
   })
 
   // 监听pid改变
@@ -263,6 +265,7 @@ export const useApiStore = defineStore('api', () => {
    */
   function addWatingUpdateTab (aid: string) {
     watingUpdateTabList.add(aid)
+    globalOberver.emit('update-api', aid)
   }
 
   /**

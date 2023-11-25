@@ -46,8 +46,9 @@ function handleUpdate () {
   apiStore.addWatingUpdateTab(apiStore.aid)
 }
 
-function sendRequest () {
-  networkStore.sendApi(apiStore.apiList.target, apiStore.apiList.base)
+async function sendRequest () {
+  const saveRes: boolean = await networkStore.sendApi(apiStore.apiList.target, apiStore.apiList.base) as any
+  if (saveRes === false) ViMessage.append('最新响应保存失败，历史记录已达最大上限！', 2000)
 }
 </script>
 

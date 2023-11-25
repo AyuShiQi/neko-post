@@ -6,6 +6,8 @@ import { getUserInfo, addUserInfo } from '@/common/user'
 import { verifyToken } from '../network/user'
 import { getProjectList } from '../network/proj'
 
+import { globalOberver } from '@/common/observer'
+
 /**
  * 用户信息注册
  */
@@ -45,8 +47,6 @@ export const useProfileStore = defineStore('profile', () => {
     target: null
   })
 
-  const pidEmitCb = [] as Array<() => void>
-
   // 当登录状态改变时，改变router路径
   watch(isLogin, () => {
     if (isLogin.value) router.replace('/home')
@@ -61,9 +61,7 @@ export const useProfileStore = defineStore('profile', () => {
       pid: pid.value
     })
     // 触发回调函数
-    for (const cb of pidEmitCb) {
-      cb()
-    }
+    globalOberver.emit('pid-change')
   }, { immediate: true })
 
   /**
@@ -73,9 +71,8 @@ export const useProfileStore = defineStore('profile', () => {
     // console.log('进入isLoadedProject watch函数', isLoadedProject.value)
     if (!isLoadedProject.value) return
     // 触发回调函数
-    for (const cb of pidEmitCb) {
-      cb()
-    }
+    // 触发回调函数
+    globalOberver.emit('pid-change')
   })
 
   /**
@@ -164,7 +161,7 @@ export const useProfileStore = defineStore('profile', () => {
    * @param cb 
    */
   function registerPid (cb: () => void) {
-    pidEmitCb.push(cb)
+    globalOberver.on('pid-change', cb)
   }
 
   /**
