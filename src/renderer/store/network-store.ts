@@ -6,7 +6,7 @@ import { useProfileStore } from './profile-store'
 import { useApiStore } from './api-store'
 import { parseMethod } from '../network'
 import { saveResp, updateRespType, getRespList, delResp } from '../network/resp'
-import type { Api, inputTableOption } from '../network'
+import type { Api, RespType, inputTableOption } from '../network'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { globalOberver } from '@/common/observer'
 
@@ -172,8 +172,13 @@ export const useNetworkStore = defineStore('network', () => {
     function handleDataAndHeadersAndParams () {
       const newRes: any = {...response}
       newRes.headers = JSON.stringify(newRes.headers)
-      newRes.body = JSON.stringify(newRes.body)
-      newRes.request = JSON.stringify(newRes.request)
+      newRes.data = JSON.stringify(newRes.data)
+      newRes.request = JSON.stringify({
+        headers: newRes?.config?.headers,
+        method: newRes?.config?.method,
+        url: newRes?.config?.url,
+        data: newRes?.config?.data
+      })
       return newRes
     }
   }
@@ -188,12 +193,23 @@ export const useNetworkStore = defineStore('network', () => {
   // 注册aid变化响应函数
   globalOberver.on('update-aid', updateResponseList)
 
+  async function updateResponseType (rid: string, type: RespType) {
+    return updateRespType(profileStore.token, profileStore.uid, profileStore.pid, apiStore.aid, rid, type)
+  }
+
+  async function deleteResponse (rid: string) {
+    return delResp(profileStore.token, profileStore.uid, profileStore.pid, apiStore.aid, rid)
+  }
+
   return {
     nowResponse,
     repsList,
     isError,
     sendApi,
     parseApiToAxiosOption,
-    saveResponse
+    saveResponse,
+    updateResponseList,
+    updateResponseType,
+    deleteResponse
   }
 })

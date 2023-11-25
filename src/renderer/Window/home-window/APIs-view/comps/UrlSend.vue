@@ -32,7 +32,9 @@
         </vi-select>
       </template>
     </vi-input>
-    <vi-button class="workspace-content__send-btn" color="purple" @click="sendRequest">Send</vi-button>
+    <vi-button
+    v-if="!apiStore.isBaseOpen"
+    class="workspace-content__send-btn" color="purple" @click="sendRequest">Send</vi-button>
   </div>
 </template>
 

@@ -30,6 +30,6 @@
   "dependencies": {
     "axios": "^1.5.1",
     "body-parser": "^1.20.2",
-    "viog-ui": "^0.15.20"
+    "viog-ui": "^0.15.21"
   }
 }

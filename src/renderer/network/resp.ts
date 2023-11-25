@@ -57,7 +57,7 @@ export function saveResp (token: string, uid: string, pid: string, aid: string, 
 export function delResp (token: string, uid: string, pid: string, aid: string, rid: string) {
   return getAxios<null>({
     method: 'post',
-    url: '/resp/del',
+    url: '/resp/delete',
     headers: {
       token
     },
@@ -73,7 +73,7 @@ export function delResp (token: string, uid: string, pid: string, aid: string, r
 export function updateRespType (token: string, uid: string, pid: string, aid: string, rid: string, type: Resp['type']) {
   return getAxios<null>({
     method: 'post',
-    url: '/resp/del',
+    url: '/resp/update_type',
     headers: {
       token
     },
