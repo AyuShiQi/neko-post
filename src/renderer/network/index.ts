@@ -77,6 +77,9 @@ export type Resp = {
   create_time: Date
 }
 
+export type Mock = {
+}
+
 export enum RespType {
   default,
   fix
