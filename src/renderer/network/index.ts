@@ -63,21 +63,35 @@ export type Api = {
 
 export type Resp = {
   rid: string,
-  aid: string
-  uid: string
-  pid: string
-  gid: string
-  type: RespType // 0 cur 1 histroy
-  status: number
-  statusText: string
-  headers: string | any
+  aid: string,
+  uid: string,
+  pid: string,
+  type: RespType, // 0 cur 1 histroy
+  status: number,
+  statusText: string,
+  headers: string | any,
   body: string | any,
   request: string | any,
-  update_time: Date
+  update_time: Date,
   create_time: Date
 }
 
 export type Mock = {
+  mid: string,
+  uid: string,
+  pid: string,
+  gid: string,
+  title: string,
+  path: string,
+  desc: string,
+  option: string | any[]
+  update_time: Date
+  create_time: Date
+}
+
+export type MockTreeNode = {
+  val: Mock,
+  children: MockTreeNode[]
 }
 
 export enum RespType {

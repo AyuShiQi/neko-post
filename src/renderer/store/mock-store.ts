@@ -1,7 +1,8 @@
 import { reactive, ref, watch, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useProfileStore } from './profile-store'
-import type { Mock } from '../network'
+import type { Mock, MockTreeNode } from '../network'
+import { getMockList, saveMock } from '../network/mock'
 import { globalOberver } from '@/common/observer'
 
 /**
@@ -16,9 +17,10 @@ export const useMockStore = defineStore('mock', () => {
   const serverStart = ref(false)
   // 当前聚焦的group id号(目前暂时还没有什么用)
   const gid = ref()
-  const apiList = reactive({
+  const mockList = reactive({
     // 渲染的总list表，在前端生成
     list: [] as Mock[],
+    tree: null as MockTreeNode,
     target: {} as Mock
   })
   /**
@@ -67,84 +69,72 @@ export const useMockStore = defineStore('mock', () => {
     // 重新获取list
     loadMockList()
     // 重新获取base
-    loadBase()
-    // 重新获取group
-    loadGroupList()    
+    loadBase()  
   }
 
   /**
    * 加载apiList
    */
   async function loadMockList () {
-    // profileStore.pid
-    // const { token, isLoadedProject, pid, uid } = profileStore
-    // if (isLoadedProject) {
-    //   const val = await getApiListInterface(token, uid, pid)
-    //   if (val.code === 200) {
-    //     apiList.list = val.data
-    //     loadTargetMock()
-    //     // 更换updateTab
-    //     updateTab()
-    //   }
-    //   return val
-    // } else return { code: 500, msg: '无加载项目', data: null}
+    const { token, isLoadedProject, pid, uid } = profileStore
+    if (isLoadedProject) {
+      const val = await getMockList(token, uid, pid)
+      if (val.code === 200) {
+        mockList.list = val.data
+        mockList.tree = parseMockTree(val.data) // 转换mock树
+        loadTargetMock()
+        // 更换updateTab
+        updateTab()
+      }
+      return val
+    } else return { code: 500, msg: '无加载项目', data: null}
+  }
+
+  function parseMockTree (mocks: Mock[]): MockTreeNode {
+    const visited = new Array(mocks.length).fill(false)
+    return parseTree(null)[0]
+    function parseTree (gid: string): MockTreeNode[] {
+      const target = [] as MockTreeNode[]
+      for (let i = 0; i < mocks.length; i++) {
+        if (visited[i]) continue
+        const cur = mocks[i]
+        if (cur.gid === gid) {
+          visited[i] = true
+          target.push({
+            val: cur,
+            children: parseTree(cur.mid)
+          })
+        }
+      }
+      return target
+    }
   }
 
   /**
    * 加载target
    * @param newAid 新的加载aid
    */
-  function loadTargetMock (newAid?: string) {
-    // if (newAid) mid.value = newAid
-    // if (!mid.value) return
-    // if (mid.value === apiList.base.aid) {
-    //   // 把目标变为对象
-    //   formatApi(apiList.base)
-    //   apiList.target = apiList.base
-    //   return
-    // }
-    // for (const api of apiList.list) {
-    //   if (api.aid === aid.value) {
-    //     // 把目标变为对象
-    //     formatApi(api)
-    //     apiList.target = api
-    //     return
-    //   }
-    // }
-    apiList.target = null
+  function loadTargetMock (newMid?: string) {
+    if (newMid) mid.value = newMid
+    if (!mid.value) return
+    for (const mock of mockList.list) {
+      if (mock.mid === mid.value) {
+        // 把目标变为对象
+        formatMock(mock)
+        mockList.target = mock
+        return
+      }
+    }
+    mockList.target = null
   }
 
   /**
-   * 格式化Api
-   * @param api 
+   * 格式化mock
+   * @param mock
    */
-  function formatApi (api: Mock) {
+  function formatMock (mock: Mock) {
     console.log('format')
-    // if (!(api.params instanceof Object)) api.params = JSON.parse(api.params) ?? {
-    //   target: []
-    // }
-    // if (!(api.body instanceof Object)) api.body = JSON.parse(api.body) ?? {
-    //   target: [],
-    // }
-    // if (!(api.headers instanceof Object)) api.headers = JSON.parse(api.headers) ?? {
-    //   target: [],
-    //   type: 'none'
-    // }
-    // if (!(api.headers as any).type) (api.headers as any).type = 'none'
-    // if (!(api.authorization instanceof Object)) api.authorization = JSON.parse(api.authorization) ?? {
-    //   target: []
-    // }
-  }
-  /**
-   * 加载groupList
-   */
-  async function loadGroupList () {
-    // const { token, pid, uid } = profileStore
-    // const val = await getGroupList(token, uid, pid)
-    // if (val.code === 200) {
-    //   apiList.group = val.data
-    // }
-    // return val
+    if (!(mock.option instanceof Object)) mock.option = JSON.parse(mock.option) ?? []
   }
 
   /**
@@ -332,15 +322,14 @@ export const useMockStore = defineStore('mock', () => {
     mid,
     gid,
     serverStart,
-    apiList,
+    mockList,
     tabList,
     watingUpdateTabList,
     isWatingUpdate,
-    formatApi,
+    formatMock,
     updateMock,
     loadBase,
     loadMockList,
-    loadGroupList,
     addTab,
     removeTab,
     getTabApi,

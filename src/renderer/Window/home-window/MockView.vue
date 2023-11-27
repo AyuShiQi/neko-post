@@ -17,7 +17,7 @@
             <vi-icon type="sousuo" class="search-button"/>
           </template>
         </vi-input>
-        <vi-bubble direction="right" dark>
+        <vi-bubble direction="right" class="server-bubble">
           <div class="server-btn"
           :class="{
             'server-btn-start': mockStore.serverStart
@@ -35,8 +35,23 @@
         </vi-bubble>
       </div>
       <!-- Mock服务栏 -->
-      <vi-menu style="width: 100%; background-color: transparent; padding: 0px; overflow: hidden;">
-        <vi-menu-group title="api" scalable option>
+      <vi-menu class="mock-list">
+        <vi-menu-item>{{ mockStore.mockList.tree?.val.path + mockStore.mockList.tree?.val.title }}</vi-menu-item>
+        <template v-for="mo of mockStore.mockList.tree?.children" :key="mo.mid">
+          <vi-menu-item v-if="mo.children.length === 0">
+            {{ `${mo.val.path}  ${mockStore.mockList.tree.val.title}` }}
+          </vi-menu-item>
+          <vi-menu-group v-else scalable option>
+            <template v-slot:title>
+              {{ mo.val.path + mockStore.mockList.tree.val.title }}
+            </template>
+            <vi-menu-item v-for="moo of mo.children">create 新建接口</vi-menu-item>
+          </vi-menu-group>
+        </template>
+        <vi-menu-group scalable option>
+          <template v-slot:title>
+            api
+          </template>
           <vi-menu-item>create 新建接口</vi-menu-item>
           <vi-menu-item>update 更新接口信息</vi-menu-item>
           <vi-menu-item>del 删除接口</vi-menu-item>
@@ -48,10 +63,12 @@
         </vi-menu-group>
       </vi-menu>
     </vi-flex>
+    <WorkSpace/>
   </div>
 </template>
 
 <script lang="ts" setup>
+import WorkSpace from './Mock-view/WorkSpace.vue'
 import { useMockStore } from '@/renderer/store'
 const mockStore = useMockStore()
 
@@ -136,8 +153,10 @@ function changeServer () {
       }
     }
 
-    --vi-bubble-width: 6em;
     // --vi-bubble-height: auto;
+    --vi-bubble-width: 5em;
+    --vi-bubble-padding: .5em;
+    --vi-bubble-bg-color: var(--neko-content-bg-color-s);
     .server-btn {
       width: 24px;
       height: 24px;
@@ -169,7 +188,7 @@ function changeServer () {
       }
 
       &:hover {
-        background-color: var(--neko-main-bg-color);
+        background-color: var(--neko-content-bg-color-s);
       }
     }
 
@@ -187,6 +206,14 @@ function changeServer () {
         }
       }
     }
+  }
+
+  .mock-list {
+    width: 100%; 
+    background-color: transparent;
+    padding: 0px;
+    border-radius: 0px;
+    overflow: hidden;
   }
 }
 </style>
