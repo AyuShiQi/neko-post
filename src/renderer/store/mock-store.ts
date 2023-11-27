@@ -13,6 +13,7 @@ export const useMockStore = defineStore('mock', () => {
   const mid = ref()
   // 是否正在更新target
   const isChangeTarget = ref(false)
+  const serverStart = ref(false)
   // 当前聚焦的group id号(目前暂时还没有什么用)
   const gid = ref()
   const apiList = reactive({
@@ -170,7 +171,7 @@ export const useMockStore = defineStore('mock', () => {
    * @param api api对象
    * @returns
    */
-  function updateMock (api: string | Mock) {
+  function updateMock (mock: string | Mock) {
     // let target: Api
     // if (typeof api === 'string') target = findApiWithAid(api)
     // else target = api
@@ -330,6 +331,7 @@ export const useMockStore = defineStore('mock', () => {
   return {
     mid,
     gid,
+    serverStart,
     apiList,
     tabList,
     watingUpdateTabList,
