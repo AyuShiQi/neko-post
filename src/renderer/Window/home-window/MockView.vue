@@ -6,7 +6,7 @@
       <!-- api-list头部栏 -->
       <div class="neko-mock-list__header">
         <!-- 新建按钮 -->
-        <div class="neko-mock-list__header-add">
+        <div class="neko-mock-list__header-add" @click="createMockPath">
           <svg viewBox="0 0 20 20">
             <path d="M2 10 L18 10 M10 2 L10 18"/>
           </svg>
@@ -35,33 +35,10 @@
         </vi-bubble>
       </div>
       <!-- Mock服务栏 -->
-      <vi-menu class="mock-list">
-        <vi-menu-item>{{ mockStore.mockList.tree?.val.path + mockStore.mockList.tree?.val.title }}</vi-menu-item>
-        <template v-for="mo of mockStore.mockList.tree?.children" :key="mo.mid">
-          <vi-menu-item v-if="mo.children.length === 0">
-            {{ `${mo.val.path}  ${mockStore.mockList.tree.val.title}` }}
-          </vi-menu-item>
-          <vi-menu-group v-else scalable option>
-            <template v-slot:title>
-              {{ mo.val.path + mockStore.mockList.tree.val.title }}
-            </template>
-            <vi-menu-item v-for="moo of mo.children">create 新建接口</vi-menu-item>
-          </vi-menu-group>
-        </template>
-        <vi-menu-group scalable option>
-          <template v-slot:title>
-            api
-          </template>
-          <vi-menu-item>create 新建接口</vi-menu-item>
-          <vi-menu-item>update 更新接口信息</vi-menu-item>
-          <vi-menu-item>del 删除接口</vi-menu-item>
-        </vi-menu-group>
-        <vi-menu-group title="user" scalable option>
-          <vi-menu-item>login 登录</vi-menu-item>
-          <vi-menu-item>register 注册</vi-menu-item>
-          <vi-menu-item>del 删除用户</vi-menu-item>
-        </vi-menu-group>
+      <vi-menu class="mock-list" :modelValue="mockStore.mid" @update:modelValue="mockPickUpdate">
+        <MockGroup :mockNode="mockStore.mockList.tree"></MockGroup>
       </vi-menu>
+      <CreateMock v-model="createOpen"/>
     </vi-flex>
     <WorkSpace/>
   </div>
@@ -69,12 +46,26 @@
 
 <script lang="ts" setup>
 import WorkSpace from './Mock-view/WorkSpace.vue'
+import CreateMock from '@/renderer/components/CreateMock.vue'
+import MockGroup from './Mock-view/MockGroup.vue'
 import { useMockStore } from '@/renderer/store'
+import { ref } from 'vue'
 const mockStore = useMockStore()
 
+// const chooseMid = ref(mockStore.mid)
+
+const createOpen = ref(false)
 function changeServer () {
   mockStore.serverStart = !mockStore.serverStart
-  console.log(mockStore.serverStart)
+}
+
+function createMockPath () {
+  createOpen.value = true
+}
+
+function mockPickUpdate (id: number, mid: string) {
+  console.log('update', id, mid)
+  mockStore.mid = mid
 }
 </script>
 

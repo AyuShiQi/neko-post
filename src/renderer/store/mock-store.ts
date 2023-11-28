@@ -53,27 +53,27 @@ export const useMockStore = defineStore('mock', () => {
   /**
    * 更新新的项目Api列表
    */
-  function updateNewProjectMock () {
+  async function updateNewProjectMock () {
     // console.log('通过pid或者加载project状态进入清空tablist')
     // tabList改变
-    mid.value = undefined
     // 清空tabList列表
     clearTabList()
-    updateInfo()
+    await updateInfo()
+    // 更改为根路径
+    console.log('pick root')
+    mid.value = mockList.tree?.val?.mid
   }
 
   /**
-   * 更新api列表
+   * 更新mock列表
    */
-  function updateInfo () {
+  async function updateInfo () {
     // 重新获取list
-    loadMockList()
-    // 重新获取base
-    loadBase()  
+    await loadMockList()
   }
 
   /**
-   * 加载apiList
+   * 加载mockList
    */
   async function loadMockList () {
     const { token, isLoadedProject, pid, uid } = profileStore
@@ -82,6 +82,7 @@ export const useMockStore = defineStore('mock', () => {
       if (val.code === 200) {
         mockList.list = val.data
         mockList.tree = parseMockTree(val.data) // 转换mock树
+        console.log('tree', mockList.tree)
         loadTargetMock()
         // 更换updateTab
         updateTab()
@@ -137,14 +138,8 @@ export const useMockStore = defineStore('mock', () => {
     if (!(mock.option instanceof Object)) mock.option = JSON.parse(mock.option) ?? []
   }
 
-  /**
-   * 加载基础配置
-   */
-  async function loadBase () {
-    // const { token, pid, uid } = profileStore
-    // const val = await getBase(token, uid, pid)
-    // if (val.code === 200) apiList.base = val.data
-    // return val
+  async function createMock (title: string, path: string) {
+    return saveMock(profileStore.token, profileStore.uid, profileStore.pid, title, path, mid.value)
   }
 
   /**
@@ -298,26 +293,6 @@ export const useMockStore = defineStore('mock', () => {
     // return val
   }
 
-  /**
-   * 删除组
-   * @param gaid 组的aid 
-   * @returns
-   */
-  async function delApiGroup (gaid: string) {
-    // const val = await dg(profileStore.token, profileStore.uid, profileStore.pid, gaid)
-    // if (val.code === 200) {
-    //   const apis = groupApi.value(gaid)
-    //   for (const api of apis) {
-    //     removeTab(api.aid)
-    //     if (aid.value === api.aid) aid.value = getTabApi()
-    //     removeWatingUpdateTab(gaid)    
-    //   }
-    //   await loadApiList()
-    //   await loadGroupList()
-    // }
-    // return val
-  }
-
   return {
     mid,
     gid,
@@ -328,8 +303,8 @@ export const useMockStore = defineStore('mock', () => {
     isWatingUpdate,
     formatMock,
     updateMock,
-    loadBase,
     loadMockList,
+    createMock,
     addTab,
     removeTab,
     getTabApi,
@@ -339,6 +314,5 @@ export const useMockStore = defineStore('mock', () => {
     updateAllWatingUpdate,
     updateMockTitle,
     delApi,
-    delApiGroup
   }
 })

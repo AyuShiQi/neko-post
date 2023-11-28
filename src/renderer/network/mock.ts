@@ -32,7 +32,7 @@ export function getMockList (token: string, uid: string, pid: string) {
  * @param resp resp
  * @returns 最终Mock
  */
-export function saveMock (token: string, uid: string, pid: string, opt: string, gid: string = null) {
+export function saveMock (token: string, uid: string, pid: string, title: string, path: string, gid: string = null) {
   return getAxios<Mock>({
     method: 'post',
     url: '/mock/save',
@@ -43,7 +43,8 @@ export function saveMock (token: string, uid: string, pid: string, opt: string, 
       uid,
       pid,
       gid,
-      opt
+      path,
+      title
     }
   })
 }
