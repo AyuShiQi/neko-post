@@ -50,7 +50,6 @@ import CreateMock from '@/renderer/components/CreateMock.vue'
 import MockGroup from './Mock-view/MockGroup.vue'
 import { useMockStore } from '@/renderer/store'
 import { ref } from 'vue'
-import { MockTreeNode } from '@/renderer/network'
 const mockStore = useMockStore()
 
 // const chooseMid = ref(mockStore.mid)

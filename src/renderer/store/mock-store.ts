@@ -15,13 +15,30 @@ export const useMockStore = defineStore('mock', () => {
   // 是否正在更新target
   const isChangeTarget = ref(false)
   const serverStart = ref(false)
-  // 当前聚焦的group id号(目前暂时还没有什么用)
-  const gid = ref()
   const mockList = reactive({
     // 渲染的总list表，在前端生成
     list: [] as Mock[],
     tree: null as MockTreeNode,
     target: {} as Mock,
+  })
+
+  const pathList = computed(() => {
+    const visited = new Set<string>()
+    const path = [] as string[]
+    findParent(mid.value)
+    console.log('path', path)
+    return path
+    function findParent (gid: string) {
+      if (visited.has(gid) || gid === null) return
+      visited.add(gid)
+      for (const mock of mockList.list) {
+        if (mock.mid === gid) {
+          path.unshift(mock.path)
+          findParent(mock.gid)
+          break
+        }
+      }
+    }
   })
   /**
    * 已打开mock列表
@@ -298,7 +315,7 @@ export const useMockStore = defineStore('mock', () => {
 
   return {
     mid,
-    gid,
+    pathList,
     serverStart,
     mockList,
     tabList,
