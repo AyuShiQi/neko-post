@@ -21,7 +21,7 @@ export const useMockStore = defineStore('mock', () => {
     // 渲染的总list表，在前端生成
     list: [] as Mock[],
     tree: null as MockTreeNode,
-    target: {} as Mock
+    target: {} as Mock,
   })
   /**
    * 已打开mock列表
@@ -93,18 +93,21 @@ export const useMockStore = defineStore('mock', () => {
 
   function parseMockTree (mocks: Mock[]): MockTreeNode {
     const visited = new Array(mocks.length).fill(false)
-    return parseTree(null)[0]
-    function parseTree (gid: string): MockTreeNode[] {
+    return parseTree(null, null)[0]
+    function parseTree (gid: string, parentNode: MockTreeNode): MockTreeNode[] {
       const target = [] as MockTreeNode[]
       for (let i = 0; i < mocks.length; i++) {
         if (visited[i]) continue
         const cur = mocks[i]
         if (cur.gid === gid) {
           visited[i] = true
-          target.push({
+          const nowNode = {
             val: cur,
-            children: parseTree(cur.mid)
-          })
+            parentNode,
+            children: null
+          }
+          nowNode.children = parseTree(cur.mid, nowNode)
+          target.push(nowNode)
         }
       }
       return target

@@ -46,6 +46,8 @@ async function handleCreateMock (res: boolean, getSubmitFeedback: (m: Map<string
 }
 
 function handleBoxUpdate (val: boolean) {
+  path.value = ''
+  title.value = ''
   emit('update:modelValue', val)
 }
 </script>

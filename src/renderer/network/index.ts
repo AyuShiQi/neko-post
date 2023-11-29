@@ -91,6 +91,7 @@ export type Mock = {
 
 export type MockTreeNode = {
   val: Mock,
+  parentNode: MockTreeNode,
   children: MockTreeNode[]
 }
 

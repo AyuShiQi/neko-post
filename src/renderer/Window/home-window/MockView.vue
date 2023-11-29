@@ -36,7 +36,7 @@
       </div>
       <!-- Mock服务栏 -->
       <vi-menu class="mock-list" :modelValue="mockStore.mid" @update:modelValue="mockPickUpdate">
-        <MockGroup :mockNode="mockStore.mockList.tree"></MockGroup>
+        <MockGroup :mockNode="mockStore.mockList.tree" :step="0"></MockGroup>
       </vi-menu>
       <CreateMock v-model="createOpen"/>
     </vi-flex>
@@ -50,6 +50,7 @@ import CreateMock from '@/renderer/components/CreateMock.vue'
 import MockGroup from './Mock-view/MockGroup.vue'
 import { useMockStore } from '@/renderer/store'
 import { ref } from 'vue'
+import { MockTreeNode } from '@/renderer/network'
 const mockStore = useMockStore()
 
 // const chooseMid = ref(mockStore.mid)
@@ -63,8 +64,8 @@ function createMockPath () {
   createOpen.value = true
 }
 
-function mockPickUpdate (id: number, mid: string) {
-  console.log('update', id, mid)
+function mockPickUpdate (mid: string) {
+  console.log('update', mid)
   mockStore.mid = mid
 }
 </script>
