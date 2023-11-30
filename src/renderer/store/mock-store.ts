@@ -26,7 +26,7 @@ export const useMockStore = defineStore('mock', () => {
     const visited = new Set<string>()
     const path = [] as string[]
     findParent(mid.value)
-    console.log('path', path)
+    // console.log('path', path)
     return path
     function findParent (gid: string) {
       if (visited.has(gid) || gid === null) return

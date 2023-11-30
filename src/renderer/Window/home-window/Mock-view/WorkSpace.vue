@@ -6,20 +6,39 @@
     <vi-breadcrumb class="path-breadcrumb">
       <vi-breadcrumb-item v-for="item of mockStore.pathList" :key="item">{{ item }}</vi-breadcrumb-item>
     </vi-breadcrumb>
-    <div class="workspace-content vi-scroll-bar">
-      <div class="func-item">
-        <vi-select>
-          <vi-option>post</vi-option>
-          <vi-option>get</vi-option>
-        </vi-select>
+    <div class="workspace-content vi-scroll-bar" v-if="mockStore.mockList.target">
+      <vi-drag-list v-model="mockStore.mockList.target.option" class="drag-list">
+        <template v-slot="{ data }">
+          <OptionItem :opt="data"/>
+        </template>
+      </vi-drag-list>
+      <div class="neko-add-opt" @click="addNewOption">
+        <svg viewBox="0 0 20 20" class="add-opt">
+          <path d="M2 10 L18 10 M10 2 L10 18"></path>
+        </svg>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import OptionItem from './OptionItem.vue'
+import { reactive } from 'vue'
 import { useMockStore } from '@/renderer/store'
 const mockStore = useMockStore()
+
+const option = reactive([
+  { method: 0, statusCode: 200, response: '你是谁' },
+  { method: 1, statusCode: 200, response: '你是谁' }
+])
+
+function addNewOption () {
+  if (mockStore.mockList.target) {
+    (mockStore.mockList.target.option as any[]).push({
+      method: 0
+    })
+  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -39,7 +58,8 @@ const mockStore = useMockStore()
   }
 
   .path-breadcrumb {
-    padding: 8px 0;
+    height: 28px;
+    line-height: 28px;
     --vi-background-color-deep: var(--neko-grey-font-color);
   }
 
@@ -50,24 +70,37 @@ const mockStore = useMockStore()
   }
 
   .workspace-content {
-    display: flex;
     width: 100%;
     height: calc(100% - 40px);
     box-sizing: border-box;
-    padding: 10px 8px 0 8px;
-    flex-direction: column;
-    align-items: center;
+    // padding: 10px 8px 0 8px;
 
-    .func-item {
-      // display: grid;
-      width: 80%;
-      height: 200px;
+    .drag-list {
+      width: 100%;
+      align-items: center; 
+    }
+
+    .neko-add-opt {
+      display: flex;
+      width: 100%;
+      // max-width: 200px;
+      height: 40px;
+      margin-top: 8px;
       box-shadow: inset 0 0 0 1px var(--neko-white-border-color);
-      background-color: var(--neko-bg-color);
-      backdrop-filter: blur(5px);
       border-radius: 5px;
-      // grid-template-columns: 1fr 1fr;
-      // grid-template-rows: 1fr 1fr;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--neko-bg-color);
+      }
+
+      .add-opt {
+        width: 30px;
+        stroke: #fff;
+        stroke-linecap: round;
+      }
     }
   }
 }
