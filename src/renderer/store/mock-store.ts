@@ -2,7 +2,7 @@ import { reactive, ref, watch, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useProfileStore } from './profile-store'
 import type { Mock, MockTreeNode } from '../network'
-import { getMockList, saveMock } from '../network/mock'
+import { getMockList, saveMock, updateOpt } from '../network/mock'
 import { globalOberver } from '@/common/observer'
 
 /**
@@ -77,7 +77,7 @@ export const useMockStore = defineStore('mock', () => {
     clearTabList()
     await updateInfo()
     // 更改为根路径
-    console.log('pick root')
+    // console.log('pick root')
     mid.value = mockList.tree?.val?.mid
   }
 
@@ -176,23 +176,13 @@ export const useMockStore = defineStore('mock', () => {
    * @param api api对象
    * @returns
    */
-  function updateMock (mock: string | Mock) {
-    // let target: Api
-    // if (typeof api === 'string') target = findApiWithAid(api)
-    // else target = api
-    // // console.log('update api', target)
-    // if (!target) return Promise.resolve({ code: 500, msg: '', data: null })
-    // return updateApiInterface(profileStore.token, profileStore.uid, profileStore.pid, target.aid, target.type, {
-    //   gid: target.gid,
-    //   title: target.title,
-    //   desc: target.desc,
-    //   method: target.method,
-    //   url: target.url,
-    //   params: JSON.stringify(target.params),
-    //   headers: JSON.stringify(target.headers),
-    //   authorization: JSON.stringify(target.authorization),
-    //   body: JSON.stringify(target.body)
-    // })
+  function updateMockOpt (mock: string | Mock) {
+    let target: Mock
+    if (typeof mock === 'string') target = findMockWithMid(mock)
+    else target = mock
+    // console.log('update api', target)
+    if (!target) return Promise.resolve({ code: 500, msg: '', data: null })
+    return updateOpt(profileStore.token, profileStore.uid, profileStore.pid, target.mid, target.gid, JSON.stringify(target.option))
   }
 
   /**
@@ -278,9 +268,9 @@ export const useMockStore = defineStore('mock', () => {
    * 更新全部待更新接口
    */
   function updateAllWatingUpdate () {
-    for (const aid of watingUpdateTabList.values() as any) {
-      updateMock(aid)
-      removeWatingUpdateTab(aid)
+    for (const mid of watingUpdateTabList.values() as any) {
+      updateMockOpt(mid)
+      removeWatingUpdateTab(mid)
     }
   }
 
@@ -288,12 +278,11 @@ export const useMockStore = defineStore('mock', () => {
    * 通过aid找到对应的接口信息（包括基础配置，但不包括组）
    * @param aid 
    */
-  function findApiWithAid (aid: string) {
+  function findMockWithMid (mid: string) {
     // 基础配置匹配
-    // if (apiList.base.aid === aid) return apiList.base
-    // for (const api of apiList.list) {
-    //   if (api.aid === aid) return api
-    // }
+    for (const mock of mockList.list) {
+      if (mock.mid === mid) return mock
+    }
     return null
   }
 
@@ -322,7 +311,7 @@ export const useMockStore = defineStore('mock', () => {
     watingUpdateTabList,
     isWatingUpdate,
     formatMock,
-    updateMock,
+    updateMockOpt,
     loadMockList,
     createMock,
     addTab,

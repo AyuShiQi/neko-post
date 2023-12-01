@@ -3,7 +3,7 @@
     <vi-flex
     class="neko-mock-list"
     horizontal="none">
-      <!-- api-list头部栏 -->
+      <!-- mock-list头部栏 -->
       <div class="neko-mock-list__header">
         <!-- 新建按钮 -->
         <div class="neko-mock-list__header-add" @click="createMockPath">
@@ -35,7 +35,7 @@
         </vi-bubble>
       </div>
       <!-- Mock服务栏 -->
-      <vi-menu class="mock-list" :modelValue="mockStore.mid" @update:modelValue="mockPickUpdate">
+      <vi-menu class="mock-list" v-model="mockStore.mid" v-if="mockStore.mockList.tree">
         <MockGroup :mockNode="mockStore.mockList.tree" :step="0"></MockGroup>
       </vi-menu>
       <CreateMock v-model="createOpen"/>
@@ -61,11 +61,6 @@ function changeServer () {
 
 function createMockPath () {
   createOpen.value = true
-}
-
-function mockPickUpdate (mid: string) {
-  console.log('update', mid)
-  mockStore.mid = mid
 }
 </script>
 

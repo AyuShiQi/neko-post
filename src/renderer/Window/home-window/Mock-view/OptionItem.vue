@@ -8,6 +8,8 @@
         v-model="opt.method"
         placeholder="请选择匹配方法"
         type="button"
+        once
+        @select="getUpdate"
         class="neko-input-select">
           <vi-option class="get" :value="null">未知</vi-option>
           <vi-option class="get" :value="0">GET</vi-option>
@@ -19,30 +21,71 @@
           <vi-option class="options" :value="6">OPTIONS</vi-option>
           <vi-option class="connect" :value="7">CONNECT</vi-option>
         </vi-select>
-        <vi-input type="button" v-model="opt.statusCode">
+        <vi-input type="button" v-model="opt.statusCode"
+        @input="getUpdate">
           <template v-slot:prefix>
             响应码
           </template>
         </vi-input>
       </div>
-      <div class="func-item__return-text" contenteditable v-html="opt.response"></div>
+      <div
+      ref="textInput"
+      class="func-item__return-text"
+      contenteditable
+      @input="handleTextInput"
+      @keydown="handleTextMouseInput"
+      @blur="handleTextBlur">
+        {{ opt.response }}
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { handleError } from 'vue';
-
+import { ref } from 'vue'
+import { useMockStore } from '@/renderer/store'
+const mockStore = useMockStore()
 const props = defineProps<{
   opt: {
     method: number,
     statusCode: number,
-    response: string
+    response: any
   }
 }>()
 
+const textInput = ref()
+const isTextUpdate = ref(false)
+
+function getUpdate () {
+  mockStore.addWatingUpdateTab(mockStore.mid)
+}
+
 function handleIgnoreMousedown (e: Event) {
   e.stopPropagation()
+}
+
+function handleTextMouseInput (e: KeyboardEvent) {
+  if (e.code === 'Tab') e.preventDefault()
+}
+
+function handleTextInput () {
+  isTextUpdate.value = true
+}
+
+function handleTextBlur () {
+  if (!isTextUpdate.value) return
+  isTextUpdate.value = false
+  try {
+    const rep = textInput.value.innerText.replaceAll(/\s/g, '')
+    if (rep === '') props.opt.response = rep
+    else {
+      const newInfo = JSON.parse(textInput.value.innerText.replaceAll(/\s/g, ''))
+      props.opt.response = newInfo
+    }
+    getUpdate()
+  } catch {
+    console.log('不进入保存队列')
+  }
 }
 </script>
 
@@ -133,6 +176,7 @@ function handleIgnoreMousedown (e: Event) {
       border-radius: 5px;
       box-sizing: border-box;
       outline: none;
+      white-space: pre;
     }
   }
 }

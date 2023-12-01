@@ -23,22 +23,41 @@
 
 <script lang="ts" setup>
 import OptionItem from './OptionItem.vue'
-import { reactive } from 'vue'
+import { reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useMockStore } from '@/renderer/store'
+import { ViMessage } from 'viog-ui'
 const mockStore = useMockStore()
-
-const option = reactive([
-  { method: 0, statusCode: 200, response: '你是谁' },
-  { method: 1, statusCode: 200, response: '你是谁' }
-])
 
 function addNewOption () {
   if (mockStore.mockList.target) {
     (mockStore.mockList.target.option as any[]).push({
       method: 0
     })
+    mockStore.addWatingUpdateTab(mockStore.mid)
   }
 }
+
+async function saveMockOpt (e: KeyboardEvent) {
+  if (e.ctrlKey && e.code === 'KeyS') {
+    console.log('ok')
+    if (mockStore.mid && mockStore.isWatingUpdate(mockStore.mid)) {
+      const res = await mockStore.updateMockOpt(mockStore.mockList.target)
+      if (res.code === 200) {
+        mockStore.removeWatingUpdateTab(mockStore.mid)
+      } else {
+        ViMessage.append('更新失败!', 2000)
+      }
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keypress', saveMockOpt)
+})
+
+onBeforeUnmount(() => {
+  window.addEventListener('keypress', saveMockOpt)
+})
 </script>
 
 <style lang="less" scoped>
@@ -71,7 +90,7 @@ function addNewOption () {
 
   .workspace-content {
     width: 100%;
-    height: calc(100% - 40px);
+    height: calc(100% - 68px);
     box-sizing: border-box;
     // padding: 10px 8px 0 8px;
 

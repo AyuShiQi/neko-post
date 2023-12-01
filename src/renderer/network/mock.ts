@@ -65,19 +65,19 @@ export function saveMock (token: string, uid: string, pid: string, title: string
 //   })
 // }
 
-// export function updateRespType (token: string, uid: string, pid: string, aid: string, rid: string, type: Resp['type']) {
-//   return getAxios<null>({
-//     method: 'post',
-//     url: '/resp/update_type',
-//     headers: {
-//       token
-//     },
-//     data: {
-//       uid,
-//       pid,
-//       aid,
-//       rid,
-//       type
-//     }
-//   })
-// }
+export function updateOpt (token: string, uid: string, pid: string, mid: string, gid: string, opt: string ) {
+  return getAxios<null>({
+    method: 'post',
+    url: '/mock/update',
+    headers: {
+      token
+    },
+    data: {
+      uid,
+      pid,
+      mid,
+      gid,
+      opt
+    }
+  })
+}
