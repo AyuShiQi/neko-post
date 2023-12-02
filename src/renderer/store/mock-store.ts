@@ -2,7 +2,7 @@ import { reactive, ref, watch, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useProfileStore } from './profile-store'
 import type { Mock, MockTreeNode } from '../network'
-import { getMockList, saveMock, updateOpt } from '../network/mock'
+import { getMockList, saveMock, updateOpt, updatePath, updateTitle, delMock } from '../network/mock'
 import { globalOberver } from '@/common/observer'
 
 /**
@@ -73,8 +73,6 @@ export const useMockStore = defineStore('mock', () => {
   async function updateNewProjectMock () {
     // console.log('通过pid或者加载project状态进入清空tablist')
     // tabList改变
-    // 清空tabList列表
-    clearTabList()
     await updateInfo()
     // 更改为根路径
     // console.log('pick root')
@@ -97,12 +95,10 @@ export const useMockStore = defineStore('mock', () => {
     if (isLoadedProject) {
       const val = await getMockList(token, uid, pid)
       if (val.code === 200) {
-        mockList.list = val.data
+        mockList.list = formatMockList(val.data)
         mockList.tree = parseMockTree(val.data) // 转换mock树
-        console.log('tree', mockList.tree)
+        // console.log('tree', mockList.tree)
         loadTargetMock()
-        // 更换updateTab
-        updateTab()
       }
       return val
     } else return { code: 500, msg: '无加载项目', data: null}
@@ -141,7 +137,7 @@ export const useMockStore = defineStore('mock', () => {
     for (const mock of mockList.list) {
       if (mock.mid === mid.value) {
         // 把目标变为对象
-        formatMock(mock)
+        // formatMock(mock)
         mockList.target = mock
         return
       }
@@ -154,21 +150,19 @@ export const useMockStore = defineStore('mock', () => {
    * @param mock
    */
   function formatMock (mock: Mock) {
-    console.log('format')
-    if (!(mock.option instanceof Object)) mock.option = JSON.parse(mock.option) ?? []
+    // console.log('format')
+    if (!(mock.option instanceof Object)) {
+      mock.option = JSON.parse(mock.option) ?? []
+    }
+    return mock
+  }
+
+  function formatMockList (mocks: Mock[]) {
+    return mocks.map(item => formatMock(item))
   }
 
   async function createMock (title: string, path: string) {
     return saveMock(profileStore.token, profileStore.uid, profileStore.pid, title, path, mid.value)
-  }
-
-  /**
-   * 添加tab-card
-   * @param aid 接口id
-   * @param api 接口对象
-   */
-  function addTab (aid: string, api: Mock) {
-    tabList.set(aid, api)
   }
 
   /**
@@ -185,83 +179,36 @@ export const useMockStore = defineStore('mock', () => {
     return updateOpt(profileStore.token, profileStore.uid, profileStore.pid, target.mid, target.gid, JSON.stringify(target.option))
   }
 
-  /**
-   * 更新接口信息
-   * @param api api对象
-   * @returns
-   */
-  function updateMockTitle (api: string | Mock, title: string) {
-    // let target: Api
-    // if (typeof api === 'string') target = findApiWithAid(api)
-    // else target = api
-    // // console.log('update api', target)
-    // if (!target) return Promise.resolve({ code: 500, msg: '', data: null })
-    // if (target.title === title) return Promise.resolve({ code: 201, msg: '没有更改', data: null })
-    // return updateApiInterface(profileStore.token, profileStore.uid, profileStore.pid, target.aid, target.type, {
-    //   title
-    // })
+  function updateMockTitle (mock: string | Mock, title: string) {
+    let target: Mock
+    if (typeof mock === 'string') target = findMockWithMid(mock)
+    else target = mock
+    if (!target) return Promise.resolve({ code: 500, msg: '', data: null })
+    return updateTitle(profileStore.token, profileStore.uid, profileStore.pid, target.mid, target.gid, title)
   }
 
-  /**
-   * 更新tabList中update后的信息
-   */
-  function updateTab () {
-    // let change = 0
-    // for(const api of apiList.list) {
-    //   if (tabList.has(api.aid)) {
-    //     tabList.set(api.aid, api)
-    //     change++
-    //   }
-    //   if (change >= tabList.size) break
-    // }
-  }
-
-  function removeTab (aid: string) {
-    tabList.delete(aid)
-  }
-
-  /**
-   * 随机返回一个tab Api
-   * @returns
-   */
-  function getTabApi () {
-    for (const aid of tabList.keys() as any) {
-      return aid
-    }
-    return null
-  }
-
-  function clearTabList () {
-    tabList.clear()
-    watingUpdateTabList.clear()
+  function updateMockPath(mock: string | Mock, path: string) {
+    let target: Mock
+    if (typeof mock === 'string') target = findMockWithMid(mock)
+    else target = mock
+    if (!target) return Promise.resolve({ code: 500, msg: '', data: null })
+    return updatePath(profileStore.token, profileStore.uid, profileStore.pid, target.mid, target.gid, path)
   }
 
   /**
    * 添加待更新的列表
    * @param aid 
    */
-  function addWatingUpdateTab (aid: string) {
-    watingUpdateTabList.add(aid)
-    globalOberver.emit('update-api', aid)
+  function addWatingUpdateTab (mid: string) {
+    watingUpdateTabList.add(mid)
   }
 
   /**
    * 溢出待更新的列表
-   * @param aid 
+   * @param mid 
    */
-  function removeWatingUpdateTab (aid: string) {
-    watingUpdateTabList.delete(aid)
-  }
-
-  /**
-   * 随机返回一个待更新接口aid
-   * @returns 
-   */
-  function getAWatingUpdateAid () {
-    for (const aid of watingUpdateTabList.values() as any) {
-      return aid
-    }
-    return null
+  function removeWatingUpdateTab (mid: string) {
+    watingUpdateTabList.delete(mid)
   }
 
   /**
@@ -276,7 +223,7 @@ export const useMockStore = defineStore('mock', () => {
 
   /**
    * 通过aid找到对应的接口信息（包括基础配置，但不包括组）
-   * @param aid 
+   * @param mid 
    */
   function findMockWithMid (mid: string) {
     // 基础配置匹配
@@ -288,18 +235,19 @@ export const useMockStore = defineStore('mock', () => {
 
   /**
    * 删除接口
-   * @param daid 接口id 
+   * @param dmid 接口id 
    * @returns
    */
-  async function delApi (daid: string) {
-    // const val = await da(profileStore.token, profileStore.uid, profileStore.pid, daid)
-    // if (val.code === 200) {
-    //   removeTab(daid)
-    //   if (aid.value === daid) aid.value = getTabApi()
-    //   removeWatingUpdateTab(daid)      
-    //   loadApiList()
-    // }
-    // return val
+  async function deleteMock (dmid: string) {
+    const target = findMockWithMid(dmid)
+    if (!target) return { code: 500, msg: '未找到对应mock', data: null }
+    const val = await delMock(profileStore.token, profileStore.uid, profileStore.pid, target.gid, dmid)
+    if (val.code === 200) {
+      removeWatingUpdateTab(dmid)
+      loadMockList()
+      mid.value = target.gid
+    }
+    return val
   }
 
   return {
@@ -312,16 +260,13 @@ export const useMockStore = defineStore('mock', () => {
     isWatingUpdate,
     formatMock,
     updateMockOpt,
+    updateMockPath,
     loadMockList,
     createMock,
-    addTab,
-    removeTab,
-    getTabApi,
     addWatingUpdateTab,
     removeWatingUpdateTab,
-    getAWatingUpdateAid,
     updateAllWatingUpdate,
     updateMockTitle,
-    delApi,
+    deleteMock
   }
 })

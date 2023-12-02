@@ -6,7 +6,7 @@
   title="创建新路径"
   btnTitle="创建"
   @submit="handleCreateMock">
-    <vi-form-item :rules="[{ rule: /./, info: '路径不可为空'}]" label="path">
+    <vi-form-item :rules="[{ rule: /./, info: '路径不可为空'}, { rule: /^[a-zA-Z0-9_\-]+$/, info: '只能包含字母、数字、下划线、中划线' }]" label="path">
       <vi-input name="path" v-model="path" placeholder="请输入路径名"></vi-input>
     </vi-form-item>
     <vi-form-item label="备注">

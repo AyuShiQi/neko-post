@@ -49,21 +49,30 @@ export function saveMock (token: string, uid: string, pid: string, title: string
   })
 }
 
-// export function delResp (token: string, uid: string, pid: string, aid: string, rid: string) {
-//   return getAxios<null>({
-//     method: 'post',
-//     url: '/resp/delete',
-//     headers: {
-//       token
-//     },
-//     data: {
-//       uid,
-//       pid,
-//       aid,
-//       rid
-//     }
-//   })
-// }
+/**
+ * 删除路径
+ * @param token 用户token
+ * @param uid 用户id
+ * @param pid project id
+ * @param gid 分组id
+ * @param mid mock id
+ * @returns Promise
+ */
+export function delMock (token: string, uid: string, pid: string, gid: string, mid: string) {
+  return getAxios<null>({
+    method: 'post',
+    url: '/mock/delete',
+    headers: {
+      token
+    },
+    data: {
+      uid,
+      pid,
+      gid,
+      mid
+    }
+  })
+}
 
 export function updateOpt (token: string, uid: string, pid: string, mid: string, gid: string, opt: string ) {
   return getAxios<null>({
@@ -78,6 +87,40 @@ export function updateOpt (token: string, uid: string, pid: string, mid: string,
       mid,
       gid,
       opt
+    }
+  })
+}
+
+export function updatePath (token: string, uid: string, pid: string, mid: string, gid: string, path: string) {
+  return getAxios<null>({
+    method: 'post',
+    url: '/mock/update-path',
+    headers: {
+      token
+    },
+    data: {
+      uid,
+      pid,
+      mid,
+      gid,
+      path
+    }
+  })
+}
+
+export function updateTitle (token: string, uid: string, pid: string, mid: string, gid: string, title: string) {
+  return getAxios<null>({
+    method: 'post',
+    url: '/mock/update-title',
+    headers: {
+      token
+    },
+    data: {
+      uid,
+      pid,
+      mid,
+      gid,
+      title
     }
   })
 }

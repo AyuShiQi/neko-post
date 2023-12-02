@@ -3,6 +3,11 @@
     <div class="drag-item">
     </div>
     <div class="drag-content" @mousedown="handleIgnoreMousedown">
+      <div class="func-item__del-line">
+        <svg viewBox="0 0 40 40" @click="handleDeleteOpt">
+          <path d="M1 1 L39 39 M39 1 L1 39"></path>
+        </svg>
+      </div>
       <div class="func-item__line">
         <vi-select
         v-model="opt.method"
@@ -53,8 +58,16 @@ const props = defineProps<{
   }
 }>()
 
+const emit = defineEmits<{
+  delete: []
+}>()
+
 const textInput = ref()
 const isTextUpdate = ref(false)
+
+function handleDeleteOpt () {
+  emit('delete')
+}
 
 function getUpdate () {
   mockStore.addWatingUpdateTab(mockStore.mid)
@@ -92,17 +105,17 @@ function handleTextBlur () {
 <style lang="less" scoped>
 .func-item {
   position: relative;
-  width: 428px;
-  box-shadow: inset 0 0 0 1px var(--neko-white-border-color);
+  width: 438px;
+  // box-shadow: inset 0 0 0 1px var(--neko-white-border-color);
   border-radius: 5px;
 
   .drag-item {
     position: absolute;
-    left: -20px;
+    left: -30px;
     top: 50%;
-    margin-top: -20px;
-    width: 20px;
-    height: 40px;
+    margin-top: -30px;
+    width: 30px;
+    height: 60px;
     border-radius: 5px 0 0 5px;
     background-color: var(--neko-bg-color);
     cursor: pointer;
@@ -118,6 +131,30 @@ function handleTextBlur () {
     flex-direction: column;
     align-items: center;
     border-radius: 5px;
+
+    .func-item__del-line {
+      display: flex;
+      position: absolute;
+      top: 0;
+      right: -80px;
+      width: 80px;
+      height: 100%;
+      // background-color: pink;
+      align-items: center;
+      justify-content: end;
+      opacity: 0;
+
+      > svg {
+        width: 30px;
+        stroke: var(--neko-white-border-color);
+        cursor: pointer;
+        stroke-width: 2;
+
+        &:hover {
+          stroke: var(--neko-white-font-color);
+        }
+      }
+    }
 
     .func-item__line {
       display: flex;
@@ -177,6 +214,12 @@ function handleTextBlur () {
       box-sizing: border-box;
       outline: none;
       white-space: pre;
+    }
+
+    &:hover {
+      .func-item__del-line {
+        opacity: 1;
+      }
     }
   }
 }

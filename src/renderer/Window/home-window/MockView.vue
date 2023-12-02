@@ -40,7 +40,7 @@
       </vi-menu>
       <CreateMock v-model="createOpen"/>
     </vi-flex>
-    <WorkSpace/>
+    <WorkSpace v-if="mockStore.mid !== undefined"/>
   </div>
 </template>
 
