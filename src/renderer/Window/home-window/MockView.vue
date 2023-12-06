@@ -48,9 +48,9 @@
 import WorkSpace from './Mock-view/WorkSpace.vue'
 import CreateMock from '@/renderer/components/CreateMock.vue'
 import MockGroup from './Mock-view/MockGroup.vue'
-import { currentServer, createNewServer } from '@/common/mock-server'
+// import { currentServer, createNewServer } from '@/common/mock-server'
 import { useMockStore } from '@/renderer/store'
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 const mockStore = useMockStore()
 
 // const chooseMid = ref(mockStore.mid)
@@ -59,10 +59,10 @@ const createOpen = ref(false)
 async function changeServer () {
   mockStore.serverStart = !mockStore.serverStart
   if (mockStore.serverStart) {
-    const data = await createNewServer()
-    alert(data)
+    // const data = await createNewServer(toRaw(mockStore.mockList.tree))
+    // alert(data)
   } else {
-    if(currentServer) currentServer.close()
+    // if(currentServer) currentServer.close()
   }
 }
 
