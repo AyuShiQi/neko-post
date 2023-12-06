@@ -84,6 +84,7 @@ export const useMockStore = defineStore('mock', () => {
     // 关闭mockServer
     if (currentServer.value) currentServer.value.close(() => {
       serverStart.value = false
+      currentServer.value = null
     })
   }
 
