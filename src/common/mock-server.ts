@@ -1,8 +1,6 @@
 import createServer from './server'
 import { MockTreeNode, Method } from '@/renderer/network'
 
-let uid: string
-let pid: string
 let curServe: ReturnType<typeof createServer>
 
 export function createNewServe (routeTree: MockTreeNode) {

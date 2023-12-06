@@ -110,7 +110,7 @@ const navPick = ref(0)
   .response-content {
     --vi-collapse-width: 100%;
     --vi-collapse-border-color: none;
-    --vi-collapse-title-pdding: .6em 6px;
+    --vi-collapse-title-padding: .6em 6px;
     --vi-collapse-border-color: var(--vi-purple-color6);
     --vi-collapse-title-bg-color: var(--vi-purple-color5);
     .response-status {

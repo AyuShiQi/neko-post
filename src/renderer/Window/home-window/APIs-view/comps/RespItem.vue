@@ -10,7 +10,7 @@
             <div class="status-attention" :style="{
               backgroundColor: isError(resp.status) ? 'var(--vi-red-color1)' : 'var(--vi-green-color1)'
             }"></div>
-            <span class="color-blue">{{ resp.status }}</span>
+            <span class="color-blue">{{ resp.status === -1 ? '' : resp.status }}</span>
             <span class="color-blue">{{ resp.statusText }}</span>
           </div>
           <span>
@@ -72,7 +72,7 @@ const fixed = computed(() => props.resp.type === RespType.fix)
 
 function isError (status: number) {
   const t = String(status)[0]
-  return t === '4' || t === '5' || t === '' || t === undefined
+  return t === '4' || t === '5' || t === '' || t === undefined || status === -1
 }
 
 function formatTime (time: string) {

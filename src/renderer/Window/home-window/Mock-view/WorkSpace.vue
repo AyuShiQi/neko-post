@@ -1,7 +1,7 @@
 <template>
   <div class="neko-workspace">
-    <div class="server-run-attention">
-      服务启动成功，服务url：127.0.0.1:4439
+    <div class="server-run-attention" v-if="mockStore.serverStart">
+      服务启动成功，服务url：127.0.0.1:{{ mockStore.port }}
     </div>
     <div class="path-breadcrumb">
       <vi-breadcrumb class="path-breadcrumb__content">

@@ -12,6 +12,8 @@ export const useMockStore = defineStore('mock', () => {
   const profileStore = useProfileStore()
   // 当前选中的mock id号
   const mid = ref()
+  // 服务port
+  const port = ref(9234)
   // 是否正在更新target
   const isChangeTarget = ref(false)
   const serverStart = ref(false)
@@ -252,6 +254,7 @@ export const useMockStore = defineStore('mock', () => {
 
   return {
     mid,
+    port,
     pathList,
     serverStart,
     mockList,

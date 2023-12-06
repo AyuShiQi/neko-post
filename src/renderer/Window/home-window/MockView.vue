@@ -30,7 +30,7 @@
             </svg>
           </div>
           <template v-slot:content>
-            {{ mockStore.serverStart? '关闭服务' : '启动服务' }}
+            {{ isPrepareStarting ? "正在操作" : mockStore.serverStart? '关闭服务' : '启动服务' }}
           </template>
         </vi-bubble>
       </div>
@@ -58,18 +58,24 @@ let currentServer: ReturnType<typeof createNewServe>
 // const chooseMid = ref(mockStore.mid)
 
 const createOpen = ref(false)
+const isPrepareStarting = ref(false)
+
 async function changeServer () {
-  mockStore.serverStart = !mockStore.serverStart
-  if (mockStore.serverStart) {
+  if (isPrepareStarting.value) return
+  isPrepareStarting.value = true
+  if (!mockStore.serverStart) {
     if(currentServer) currentServer.close()
     currentServer = createNewServe(toRaw(mockStore.mockList.tree))
-    currentServer.listen(9234, () => {
+    currentServer.listen(mockStore.port, () => {
+      mockStore.serverStart = true
+      isPrepareStarting.value = false
       ViMessage.append('服务开启成功', 2000)
     })
     // alert(data)
   } else {
     if(currentServer) currentServer.close(() => {
-      
+      mockStore.serverStart = false
+      isPrepareStarting.value = false
     })
   }
 }
@@ -186,6 +192,11 @@ function createMockPath () {
           d: path('M8 6 L8 14 L14 10 Z');
           transition: all .8s ease 0s;
         }
+      }
+
+      .server-btn_wating {
+        width: 20px;
+        height: 20px;
       }
 
       &:hover {
