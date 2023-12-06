@@ -1,9 +1,10 @@
-import { reactive, ref, watch, computed } from 'vue'
+import { reactive, ref, watch, computed, Ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useProfileStore } from './profile-store'
 import type { Mock, MockTreeNode } from '../network'
 import { getMockList, saveMock, updateOpt, updatePath, updateTitle, delMock } from '../network/mock'
 import { globalOberver } from '@/common/observer'
+import type { CreateNewServeReturn } from '@/common/mock-server'
 
 /**
  * 用户信息注册
@@ -17,6 +18,7 @@ export const useMockStore = defineStore('mock', () => {
   // 是否正在更新target
   const isChangeTarget = ref(false)
   const serverStart = ref(false)
+  const currentServer: Ref<CreateNewServeReturn> = ref()
   const mockList = reactive({
     // 渲染的总list表，在前端生成
     list: [] as Mock[],
@@ -79,6 +81,10 @@ export const useMockStore = defineStore('mock', () => {
     // 更改为根路径
     // console.log('pick root')
     mid.value = mockList.tree?.val?.mid
+    // 关闭mockServer
+    if (currentServer.value) currentServer.value.close(() => {
+      serverStart.value = false
+    })
   }
 
   /**
@@ -257,6 +263,7 @@ export const useMockStore = defineStore('mock', () => {
     port,
     pathList,
     serverStart,
+    currentServer,
     mockList,
     tabList,
     watingUpdateTabList,

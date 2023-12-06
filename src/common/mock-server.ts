@@ -1,7 +1,8 @@
 import createServer from './server'
 import { MockTreeNode, Method } from '@/renderer/network'
 
-let curServe: ReturnType<typeof createServer>
+export type CreateNewServeReturn = ReturnType<typeof createServer>
+let curServe: CreateNewServeReturn
 
 export function createNewServe (routeTree: MockTreeNode) {
     if (curServe) {
