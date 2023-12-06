@@ -48,21 +48,29 @@
 import WorkSpace from './Mock-view/WorkSpace.vue'
 import CreateMock from '@/renderer/components/CreateMock.vue'
 import MockGroup from './Mock-view/MockGroup.vue'
-// import { currentServer, createNewServer } from '@/common/mock-server'
+import { createNewServe } from '@/common/mock-server'
 import { useMockStore } from '@/renderer/store'
 import { ref, toRaw } from 'vue'
+import { ViMessage } from 'viog-ui'
 const mockStore = useMockStore()
 
+let currentServer: ReturnType<typeof createNewServe>
 // const chooseMid = ref(mockStore.mid)
 
 const createOpen = ref(false)
 async function changeServer () {
   mockStore.serverStart = !mockStore.serverStart
   if (mockStore.serverStart) {
-    // const data = await createNewServer(toRaw(mockStore.mockList.tree))
+    if(currentServer) currentServer.close()
+    currentServer = createNewServe(toRaw(mockStore.mockList.tree))
+    currentServer.listen(9234, () => {
+      ViMessage.append('服务开启成功', 2000)
+    })
     // alert(data)
   } else {
-    // if(currentServer) currentServer.close()
+    if(currentServer) currentServer.close(() => {
+      
+    })
   }
 }
 
